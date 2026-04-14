@@ -1,0 +1,71 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { toggleProductStatusAction } from "@/actions/admin-products-actions";
+import { Trash2, Loader2, RotateCcw } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { ConfirmActionDialog } from "@/components/shared/ConfirmActionDialog";
+
+interface ToggleButtonProps {
+  id: string;
+  active: boolean;
+}
+
+export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
+  const [isPending, startTransition] = useTransition();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleConfirm = () => {
+    startTransition(async () => {
+      try {
+        await toggleProductStatusAction(id, active);
+        toast.success(active ? "Equipamento ocultado da vitrine!" : "Equipamento restaurado para a loja com sucesso!");
+      } catch {
+        toast.error("Ocorreu um erro ao alterar o status do produto.");
+      } finally {
+        setIsOpen(false);
+      }
+    });
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        disabled={isPending}
+        className={cn(
+          "p-2 rounded-xl transition-colors disabled:opacity-50",
+          active 
+            ? "text-zinc-500 hover:text-red-400 hover:bg-red-500/10" 
+            : "text-zinc-500 hover:text-emerald-400 hover:bg-emerald-500/10"
+        )}
+        title={active ? "Ocultar (Soft Delete)" : "Restaurar Anúncio"}
+      >
+        {isPending ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : active ? (
+          <Trash2 className="h-4 w-4" />
+        ) : (
+          <RotateCcw className="h-4 w-4" />
+        )}
+      </button>
+
+      <ConfirmActionDialog
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onConfirm={handleConfirm}
+        isPending={isPending}
+        title={active ? "Ocultar Equipamento?" : "Restaurar Equipamento?"}
+        description={
+          active
+            ? "Remover este item da loja pública? Ele não será deletado do banco de dados, apenas ficará invisível para clientes."
+            : "Restaurar este item e deixá-lo visível para compra novamente?"
+        }
+        confirmText={active ? "Sim, Ocultar" : "Sim, Restaurar"}
+        isDestructive={active}
+      />
+    </>
+  );
+}
