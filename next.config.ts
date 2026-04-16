@@ -8,6 +8,7 @@ const withSerwist = withSerwistInit({
 });
 
 const nextConfig: NextConfig = {
+  turbopack: {}, // Silencia o erro do Next.js 16 ao usar Webpack configs (Serwist) com Turbopack
   images: {
     remotePatterns: [
       {
