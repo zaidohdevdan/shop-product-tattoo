@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -13,6 +13,15 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
+
+export const viewport: Viewport = {
+  themeColor: "#6366f1",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Opcional, mas comum em PWAs para parecer mais nativo
+};
+
 
 export const metadata: Metadata = {
   title: {
@@ -59,7 +68,17 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "ShopTattoo",
+    // startupImage: [] // Pode ser adicionado futuramente
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
+
 
 import { CartDrawer } from "@/components/shared/CartDrawer";
 import { Toaster } from "sonner";
