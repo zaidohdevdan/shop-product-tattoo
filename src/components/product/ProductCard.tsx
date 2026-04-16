@@ -62,8 +62,8 @@ export function ProductCard({ product, className }: ProductCardProps) {
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         
-        {/* Quick Buy Overlay */}
-        <div className="absolute bottom-4 left-4 right-4 flex gap-2 translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+        {/* Quick Buy Overlay — Visible by default on mobile, hover on desktop */}
+        <div className="absolute bottom-4 left-4 right-4 flex gap-2 transition-all duration-300 opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-4 lg:group-hover:opacity-100 lg:group-hover:translate-y-0">
           <Link
             href={`/products/${product.slug}`}
             className="flex-1 flex h-12 items-center justify-center gap-2 rounded-xl bg-white text-black text-xs font-bold uppercase tracking-wider transition-all active:scale-95"

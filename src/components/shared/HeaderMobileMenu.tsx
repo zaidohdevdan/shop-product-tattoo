@@ -34,7 +34,7 @@ export function HeaderMobileMenu({ id, isOpen, links, onClose }: HeaderMobileMen
                 <Link
                   href={link.href}
                   onClick={onClose}
-                  className="text-2xl font-black uppercase tracking-tighter text-slate-400 active:text-white flex items-center justify-between"
+                  className="text-xl font-black uppercase tracking-tighter text-slate-400 active:text-white flex items-center justify-between"
                 >
                   {link.name}
                   <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 opacity-0 transition-opacity group-active:opacity-100" />
