@@ -12,9 +12,9 @@ import { CartButton } from "./CartButton";
 
 const navLinks = [
   { name: "Início", href: "/" },
-  { name: "Produtos", href: "#products" },
-  { name: "O Estúdio", href: "#studio" },
-  { name: "Depoimentos", href: "#testimonials" },
+  { name: "Produtos", href: "/#products" },
+  { name: "O Estúdio", href: "/#studio" },
+  { name: "Depoimentos", href: "/#testimonials" },
 ];
 
 export function Header() {

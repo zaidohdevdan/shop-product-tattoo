@@ -70,9 +70,9 @@ export function Footer() {
             <h4 className="text-white font-bold mb-6">Navegação</h4>
             <ul className="flex flex-col gap-4 text-sm text-zinc-400">
               <li><Link href="/#inicio" className="hover:text-white transition-colors">Início</Link></li>
-              <li><Link href="#products" className="hover:text-white transition-colors">Produtos</Link></li>
-              <li><Link href="#studio" className="hover:text-white transition-colors">O Estúdio</Link></li>
-              <li><Link href="#testimonials" className="hover:text-white transition-colors">Depoimentos</Link></li>
+              <li><Link href="/#products" className="hover:text-white transition-colors">Produtos</Link></li>
+              <li><Link href="/#studio" className="hover:text-white transition-colors">O Estúdio</Link></li>
+              <li><Link href="/#testimonials" className="hover:text-white transition-colors">Depoimentos</Link></li>
             </ul>
           </div>
 

@@ -12,7 +12,7 @@ export function Hero() {
   const yParallax = useTransform(scrollY, [0, 1000], [0, 300]);
   
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Background with Parallax */}
       <motion.div 
         style={{ y: yParallax }} 
