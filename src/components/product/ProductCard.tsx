@@ -22,6 +22,7 @@ interface ProductCardProps {
 }
 
 import { useCartStore } from "@/lib/store/cart-store";
+import { Button } from "@/components/ui/button";
 
 export function ProductCard({ product, className }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem);
@@ -56,6 +57,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           src={product.images[0] || "/placeholder.png"}
           alt={product.name}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -68,13 +70,15 @@ export function ProductCard({ product, className }: ProductCardProps) {
           >
             Ver Detalhes
           </Link>
-          <button
-            type="button"
-            title="Adicionar ao carrinho"
+          <Button
+            variant="premium"
+            size="icon"
             onClick={handleAddToCart}
-            className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg transition-all active:scale-90 hover:bg-indigo-500">
+            className="h-12 w-12 rounded-xl"
+            aria-label="Adicionar ao carrinho"
+          >
             <ShoppingCart className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
       </div>
 

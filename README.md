@@ -1,34 +1,71 @@
-# Getting Started
+# Shop Product Tattoo
 
-First, run the development server:
+O maior e mais bem equipado estúdio e supply de tatuagem de Fortaleza. Tradição, precisão estética e produtos aprovados por profissionais.
+
+## 🛠️ Tecnologias
+
+- **Framework:** Next.js 16 (React 19)
+- **Estilização:** Tailwind CSS 4
+- **Banco de Dados:** PostgreSQL + Prisma
+- **Estado:** Zustand
+- **Animações:** Framer Motion
+- **Autenticação:** Custom JWT (jose)
+
+## 🎨 Design System: Flash UI Mission Control
+
+Este projeto utiliza o sistema de design **Mission Control**, focado em:
+
+- **Contraste Elevado:** Fundo deep navy (#020617) com textos em tons claros de slate e indigo.
+- **Glassmorphism:** Uso refinado de desfoque de fundo e bordas semitransparentes (border-white/5).
+- **Legibilidade:** Tipografia moderna (Inter para leitura e Bebas Neue para títulos de impacto).
+- **Consistência:** Componentes padronizados para formulários, botões e cartões de produto.
+
+## 🚀 Como Executar
+
+### Desenvolvimento
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Build para Produção
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Qualidade e Linting
 
-## Learn More
+```bash
+npm run lint
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Testes Unitários
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Instalamos o Jest + React Testing Library para garantir a integridade dos componentes críticos.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Rodar todos os testes
+npm run test
 
-## Deploy on Vercel
+# Rodar testes em modo watch
+npm run test:watch
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🌐 Internacionalização (i18n)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A estrutura para suporte a múltiplos idiomas já está configurada utilizando `next-intl`.
+
+- Arquivos de tradução em: `/messages/*.json`
+- Configuração base em: `src/i18n.ts`
+
+## 🛒 Estado do Carrinho
+
+O carrinho é persistido localmente via `localStorage` com o middleware `persist` do Zustand, garantindo que os itens não sejam perdidos ao recarregar a página, com verificações de segurança para ambientes SSR.
+
+## 📈 SEO e Performance
+
+- **Otimização de Imagens:** Utiliza o componente `next/image` nativo com otimização automática.
+- **Metadados Avançados:** Configuração completa de OpenGraph, Twitter Cards e tags canônicas dinâmicas.
+- **JSON-LD:** Dados estruturados para produtos (Schema.org) implementados para melhor visibilidade em motores de busca.

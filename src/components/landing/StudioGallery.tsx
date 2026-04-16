@@ -61,6 +61,7 @@ export function StudioGallery() {
                 src={photo.src}
                 alt={photo.alt}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover transition-transform duration-700 hover:scale-110"
               />
               <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 to-transparent p-6 opacity-0 transition-opacity duration-300 hover:opacity-100">

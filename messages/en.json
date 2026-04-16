@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "home": "Home",
+    "products": "Products",
+    "studio": "The Studio",
+    "testimonials": "Testimonials"
+  },
+  "Hero": {
+    "badge": "The best studio and shop in Fortaleza",
+    "title": "Tradition, Art and Elite Equipment",
+    "subtitle": "We provide professional supplies for tattoo artists and offer the best tattoo experience in a modern and safe environment.",
+    "cta_catalog": "View Product Catalog",
+    "cta_schedule": "Schedule Tattoo"
+  },
+  "Cart": {
+    "title": "Your Cart",
+    "empty": "The cart is empty",
+    "total": "Grand Total",
+    "checkout": "Checkout via WhatsApp"
+  }
+}

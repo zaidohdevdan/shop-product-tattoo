@@ -1,0 +1,21 @@
+{
+  "Header": {
+    "home": "Início",
+    "products": "Produtos",
+    "studio": "O Estúdio",
+    "testimonials": "Depoimentos"
+  },
+  "Hero": {
+    "badge": "O melhor estúdio e loja de Fortaleza",
+    "title": "Tradição, Arte e Equipamento de Elite",
+    "subtitle": "Fornecemos suprimentos profissionais para tatuadores e oferecemos a melhor experiência de tatuagem em um ambiente moderno e seguro.",
+    "cta_catalog": "Ver Catálogo de Produtos",
+    "cta_schedule": "Agendar Tatuagem"
+  },
+  "Cart": {
+    "title": "Seu Carrinho",
+    "empty": "O carrinho está vazio",
+    "total": "Total Geral",
+    "checkout": "Finalizar via WhatsApp"
+  }
+}

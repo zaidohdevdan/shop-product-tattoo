@@ -6,7 +6,11 @@ import { redirect } from "next/navigation";
 
 export async function loginAction(formData: FormData) {
   const password = formData.get("password") as string;
-  const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  
+  if (!adminPassword) {
+    throw new Error("ADMIN_PASSWORD environment variable is not set");
+  }
 
   if (password === adminPassword) {
     // Correct password

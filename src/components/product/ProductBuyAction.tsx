@@ -19,7 +19,8 @@ interface ProductBuyActionProps {
 }
 
 export function ProductBuyAction({ product, className }: ProductBuyActionProps) {
-  const { addItem, setOpen } = useCartStore();
+  const addItem = useCartStore((state) => state.addItem);
+  const setOpen = useCartStore((state) => state.setOpen);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {

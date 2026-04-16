@@ -11,13 +11,17 @@ export interface CartItem {
   slug: string;
 }
 
-interface CartStore {
+export interface CartStore {
   items: CartItem[];
+  customerName: string;
   isOpen: boolean;
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
   addItem: (item: CartItem) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  setCustomerName: (name: string) => void;
   toggleCart: () => void;
   setOpen: (open: boolean) => void;
   totalItems: () => number;
@@ -28,7 +32,11 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      customerName: "",
       isOpen: false,
+      _hasHydrated: false,
+
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
 
       addItem: (item) => {
         const currentItems = get().items;
@@ -57,6 +65,8 @@ export const useCartStore = create<CartStore>()(
       },
 
       clearCart: () => set({ items: [] }),
+      
+      setCustomerName: (customerName) => set({ customerName }),
 
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
       
@@ -75,6 +85,27 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: "shop-tattoo-cart", // key in localStorage
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
+      storage: {
+        getItem: (name) => {
+          try {
+            const str = localStorage.getItem(name);
+            return str ? JSON.parse(str) : null;
+          } catch {
+            return null;
+          }
+        },
+        setItem: (name, value) => {
+          try {
+            localStorage.setItem(name, JSON.stringify(value));
+          } catch {
+            // Silently fail if storage is full or disabled
+          }
+        },
+        removeItem: (name) => localStorage.removeItem(name),
+      },
     }
   )
 );

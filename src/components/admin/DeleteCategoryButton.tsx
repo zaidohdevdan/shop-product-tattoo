@@ -5,6 +5,8 @@ import { deleteCategoryAction } from "@/actions/admin-categories-actions";
 import { Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmActionDialog } from "@/components/shared/ConfirmActionDialog";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface DeleteCategoryButtonProps {
   id: string;
@@ -39,19 +41,21 @@ export function DeleteCategoryButton({ id, productCount }: DeleteCategoryButtonP
 
   return (
     <>
-      <button 
-        type="button"
+      <Button 
+        variant="ghost"
+        size="sm"
         disabled={isDisabled || isPending}
         onClick={() => setIsOpen(true)}
-        className={`p-2 rounded-xl transition-colors ${
+        className={cn(
+          "h-9 w-9 p-0 rounded-xl",
           isDisabled 
            ? 'text-zinc-600 bg-black/20 cursor-not-allowed' 
            : 'text-zinc-500 hover:text-red-400 hover:bg-red-500/10'
-        }`}
-        title={isDisabled ? "Esvazie a categoria primeiro" : "Deletar Categoria"}
+        )}
+        aria-label={isDisabled ? "Esvazie a categoria primeiro" : "Deletar Categoria"}
       >
         {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-      </button>
+      </Button>
 
       <ConfirmActionDialog 
         isOpen={isOpen}

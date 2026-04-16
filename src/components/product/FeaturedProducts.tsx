@@ -1,6 +1,8 @@
 import React from "react";
 import { prisma } from "@/lib/prisma";
 import { ProductCard } from "./ProductCard";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export async function FeaturedProducts() {
   const products = await prisma.product.findMany({
@@ -27,12 +29,13 @@ export async function FeaturedProducts() {
               Produtos em Destaque
             </h3>
           </div>
-          <button
-            type="button"
-            title="Ver catálogo completo"
-            className="text-sm font-bold uppercase tracking-widest text-white/50 transition-colors hover:text-indigo-500">
-            Ver catálogo completo →
-          </button>
+          <Button
+            variant="ghost"
+            asChild
+            className="text-sm font-bold uppercase tracking-widest text-white/50 transition-colors hover:text-indigo-500 hover:bg-transparent p-0"
+          >
+            <Link href="/products">Ver catálogo completo →</Link>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">

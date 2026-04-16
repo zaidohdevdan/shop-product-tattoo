@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
+import { useCartStore } from "@/lib/store/cart-store";
 
 interface ParallaxWrapperProps {
   children: React.ReactNode;
@@ -11,7 +12,8 @@ interface ParallaxWrapperProps {
 
 export function ParallaxWrapper({ children, imageSrc }: ParallaxWrapperProps) {
   const ref = useRef(null);
-  
+  const _hasHydrated = useCartStore((state) => state._hasHydrated);
+
   // Track scroll exactly as this large section passes through the viewport
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -20,6 +22,16 @@ export function ParallaxWrapper({ children, imageSrc }: ParallaxWrapperProps) {
 
   // Move the background vertically while the user scrolls
   const yParallax = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+
+  if (!_hasHydrated) {
+    return (
+      <section ref={ref} className="relative overflow-hidden w-full bg-black min-h-[400px]">
+        <div className="relative z-10 w-full">
+          {children}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={ref} className="relative overflow-hidden w-full bg-black">

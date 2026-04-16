@@ -6,6 +6,7 @@ import { Trash2, Loader2, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { ConfirmActionDialog } from "@/components/shared/ConfirmActionDialog";
+import { Button } from "@/components/ui/button";
 
 interface ToggleButtonProps {
   id: string;
@@ -31,17 +32,18 @@ export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
 
   return (
     <>
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={() => setIsOpen(true)}
         disabled={isPending}
         className={cn(
-          "p-2 rounded-xl transition-colors disabled:opacity-50",
+          "h-9 w-9 p-0 rounded-xl",
           active 
             ? "text-zinc-500 hover:text-red-400 hover:bg-red-500/10" 
             : "text-zinc-500 hover:text-emerald-400 hover:bg-emerald-500/10"
         )}
-        title={active ? "Ocultar (Soft Delete)" : "Restaurar Anúncio"}
+        aria-label={active ? "Ocultar Equipamento" : "Restaurar Anúncio"}
       >
         {isPending ? (
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -50,7 +52,7 @@ export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
         ) : (
           <RotateCcw className="h-4 w-4" />
         )}
-      </button>
+      </Button>
 
       <ConfirmActionDialog
         isOpen={isOpen}

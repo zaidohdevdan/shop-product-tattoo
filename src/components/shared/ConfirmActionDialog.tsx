@@ -3,6 +3,7 @@
 import React, { ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ConfirmActionDialogProps {
   isOpen: boolean;
@@ -56,24 +57,22 @@ export function ConfirmActionDialog({
                 </div>
 
                 <div className="flex flex-col-reverse sm:flex-row gap-3 w-full mt-6">
-                  <button
+                  <Button
+                    variant="ghost"
                     disabled={isPending}
                     onClick={onClose}
-                    className="flex-1 px-4 py-3 rounded-xl font-bold text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50"
+                    className="flex-1 rounded-xl font-bold text-sm text-zinc-400 hover:text-white"
                   >
                     {cancelText}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant={isDestructive ? "destructive" : "premium"}
                     disabled={isPending}
                     onClick={onConfirm}
-                    className={`flex-1 px-4 py-3 rounded-xl font-bold text-sm text-white shadow-lg transition-transform active:scale-95 disabled:opacity-50 disabled:scale-100 ${
-                      isDestructive 
-                        ? 'bg-red-600 hover:bg-red-500 shadow-red-900/20' 
-                        : 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-900/20'
-                    }`}
+                    className="flex-1 rounded-xl font-bold text-sm"
                   >
                     {isPending ? "Aguarde..." : confirmText}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </motion.div>

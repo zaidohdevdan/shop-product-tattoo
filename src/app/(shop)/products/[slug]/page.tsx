@@ -9,6 +9,7 @@ import { AddToCartButton } from "@/components/product/AddToCartButton";
 import { ChevronRight, Package, ShieldCheck, Truck } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { ProductJsonLd } from "@/components/shared/ProductJsonLd";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -21,6 +22,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${product.name} — Shop Tattoo`,
     description: product.description.slice(0, 160),
+    alternates: {
+      canonical: `/products/${slug}`,
+    },
   };
 }
 
@@ -43,6 +47,18 @@ export default async function ProductPage({ params }: PageProps) {
       <Header />
 
       <main className="flex-1 pt-24">
+        <ProductJsonLd 
+          product={{
+            name: product.name,
+            description: product.description,
+            image: product.images[0] || "/placeholder.png",
+            price: price,
+            sku: product.sku,
+            slug: product.slug,
+            category: product.category.name,
+          }}
+          siteUrl="https://shoptattoo.com.br"
+        /> 
         {/* Breadcrumb */}
         <div className="border-b border-white/5 bg-zinc-950 px-6 py-4">
           <div className="mx-auto flex max-w-7xl items-center gap-2 text-xs text-zinc-500">
