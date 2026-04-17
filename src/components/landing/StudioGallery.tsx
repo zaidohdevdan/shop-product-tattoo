@@ -47,7 +47,7 @@ export function StudioGallery() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-2 h-[800px] md:h-[600px]">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-2 md:h-[600px]">
           {studioPhotos.map((photo, index) => (
             <motion.div
               key={photo.id}
@@ -55,7 +55,7 @@ export function StudioGallery() {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className={photo.className + " relative overflow-hidden rounded-3xl border border-white/5"}
+              className={photo.className + " relative overflow-hidden rounded-3xl border border-white/5 min-h-[300px] md:min-h-0 w-full md:w-auto"}
             >
               <Image
                 src={photo.src}
