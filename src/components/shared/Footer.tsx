@@ -33,6 +33,7 @@ export function Footer() {
           src="/images/theme/footer-bg.png"
           alt="Dark Tattoo Texture"
           fill
+          priority
           className="object-cover object-center scale-105"
         />
         {/* Camada de Gradiente 1: Suaviza o topo para mesclar com a página e escurece o rodapé levemente */}
