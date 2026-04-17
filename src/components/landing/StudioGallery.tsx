@@ -9,25 +9,25 @@ const studioPhotos = [
     id: 1,
     src: "/images/landing/studio-interior-2.png",
     alt: "Ambiente do Estúdio",
-    className: "col-span-2 row-span-2",
+    className: "md:col-span-2 md:row-span-2",
   },
   {
     id: 2,
     src: "/images/products/maquina-stealth-1.png",
     alt: "Processo de Tatuagem",
-    className: "col-span-1 row-span-1",
+    className: "md:col-span-1 md:row-span-1",
   },
   {
     id: 3,
     src: "/images/products/tinta-preto-1.png",
     alt: "Tintas Premium",
-    className: "col-span-1 row-span-2",
+    className: "md:col-span-1 md:row-span-2",
   },
   {
     id: 4,
     src: "/images/landing/studio-equipment.png",
     alt: "Equipamento Profissional",
-    className: "col-span-1 row-span-1",
+    className: "md:col-span-1 md:row-span-1",
   },
 ];
 
