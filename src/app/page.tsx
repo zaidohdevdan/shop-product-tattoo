@@ -34,7 +34,7 @@ export default function Home() {
             </p>
             <a
               rel="noopener"
-              href="https://wa.me/5585981025033"
+              href="https://wa.me/5585981025033?text=Ol%C3%A1%2C%20estou%20querendo%20fazer%20um%20agendamento%20com%20voc%C3%AAs%20e%20conhecer%20mais%20sobre%20o%20est%C3%BAdio!"
               target="_blank"
               className="inline-flex h-16 items-center justify-center rounded-2xl bg-white px-12 text-lg font-black uppercase text-black transition-transform hover:scale-105 active:scale-95 shadow-2xl shadow-white/5"
             >
