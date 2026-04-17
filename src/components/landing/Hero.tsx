@@ -83,7 +83,7 @@ export function Hero() {
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
-          <Link href="https://wa.me/5585981025033" target="_blank" rel="noopener">
+          <Link href="https://wa.me/5585981025033?text=Ol%C3%A1%2C%20estou%20querendo%20fazer%20um%20agendamento%20com%20voc%C3%AAs%20e%20conhecer%20mais%20sobre%20o%20est%C3%BAdio!" target="_blank" rel="noopener">
             <Button variant="outline" size="lg" className="h-16 px-10 rounded-2xl text-lg border-white/10 bg-white/5 text-white hover:bg-white/10 backdrop-blur-sm">
               Agendar Tatuagem
             </Button>
