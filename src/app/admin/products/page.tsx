@@ -47,7 +47,7 @@ export default async function AdminProductsPage() {
                     <div className="flex items-center gap-4">
                       <div className="relative h-12 w-12 rounded-xl bg-black border border-white/10 overflow-hidden shrink-0">
                         <Image 
-                          src={product.images[0] || '/placeholder.png'} 
+                          src={product.images[0] || '/placeholder-fallback.png'} 
                           alt={product.name}
                           fill
                           className="object-cover"

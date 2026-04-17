@@ -1,12 +1,20 @@
 "use client";
 
-import React, { useTransition } from "react";
+import React, { useTransition, useState } from "react";
 import { saveProductAction } from "@/actions/admin-products-actions";
 import { Button } from "@/components/ui/button";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { Product, Category } from "@prisma/client";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { ImageUpload } from "./ImageUpload";
 
 export type ClientSafeProduct = Omit<Product, "price"> & {
   price: number;
@@ -20,16 +28,39 @@ interface ProductFormProps {
 export function ProductForm({ initialData = null, categories = [] }: ProductFormProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const [sku, setSku] = useState(() => {
+    if (initialData?.sku) return initialData.sku;
+    // Geração automática inicial para novos produtos
+    const random = Math.floor(1000 + Math.random() * 9000);
+    const date = new Date().getTime().toString().slice(-4);
+    return `ST-${random}-${date}`;
+  });
+
+  const [images, setImages] = useState<string[]>(initialData?.images || []);
+  const [categoryId, setCategoryId] = useState<string>(initialData?.categoryId || categories[0]?.id || "");
+
+  const handleGenerateSKU = () => {
+    const random = Math.floor(1000 + Math.random() * 9000);
+    const date = new Date().getTime().toString().slice(-4);
+    const newSku = `ST-${random}-${date}`;
+    setSku(newSku);
+    toast.info("Novo SKU gerado com sucesso!", {
+      description: newSku,
+      icon: <RefreshCw className="h-4 w-4" />
+    });
+  };
 
   const handleSubmit = (formData: FormData) => {
     startTransition(async () => {
-      try {
-        await saveProductAction(formData);
-        toast.success(initialData ? "Equipamento revisado e salvo com sucesso!" : "Novo equipamento catalogado e publicado!");
-        router.push("/admin/products");
-      } catch {
-        toast.error("Ocorreu um erro ao salvar as informações.");
+      const result = await saveProductAction(formData);
+
+      if (result?.error) {
+        toast.error(result.error);
+        return;
       }
+
+      toast.success(initialData ? "Equipamento revisado e salvo com sucesso!" : "Novo equipamento catalogado e publicado!");
+      router.push("/admin/products");
     });
   };
 
@@ -54,37 +85,46 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
         </div>
         
         <div className="flex flex-col gap-2">
-          <label htmlFor="product-sku" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Código SKU</label>
-          <input 
-            id="product-sku"
-            type="text" 
-            name="sku" 
-            defaultValue={initialData?.sku} 
-            required 
-            placeholder="BR-MT-001"
-            className="h-12 bg-black/40 border border-white/10 rounded-xl px-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all focus:bg-black/60 shadow-sm" 
-          />
+          <label htmlFor="product-sku" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Código SKU (Auto)</label>
+          <div className="relative flex gap-2">
+            <input 
+              id="product-sku"
+              type="text" 
+              name="sku" 
+              value={sku}
+              onChange={(e) => setSku(e.target.value)}
+              required 
+              placeholder="ST-0000-0000"
+              className="h-12 flex-1 bg-black/40 border border-white/10 rounded-xl px-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all focus:bg-black/60 shadow-sm" 
+            />
+            <button
+              type="button"
+              onClick={handleGenerateSKU}
+              className="h-12 w-12 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              title="Gerar novo SKU"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
         <div className="flex flex-col gap-2">
           <label htmlFor="product-category" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Categoria</label>
-          <div className="relative">
-            <select 
-              id="product-category"
-              name="categoryId" 
-              defaultValue={initialData?.categoryId || (categories[0]?.id)} 
-              className="h-12 w-full bg-black/40 border border-white/10 rounded-xl pl-4 pr-10 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 appearance-none transition-all focus:bg-black/60 shadow-sm"
-            >
+          <input type="hidden" name="categoryId" value={categoryId} />
+          <Select value={categoryId} onValueChange={setCategoryId}>
+            <SelectTrigger className="h-12 w-full bg-black/40 border-white/10 rounded-xl">
+              <SelectValue placeholder="Selecione uma categoria" />
+            </SelectTrigger>
+            <SelectContent>
               {categories.map((cat) => (
-                <option key={cat.id} value={cat.id} className="bg-[#0f172a]">{cat.name}</option>
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
               ))}
-            </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-              <Save className="h-4 w-4 rotate-90" /> {/* Simulating a chevron if no lucide icon for it here */}
-            </div>
-          </div>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -116,15 +156,20 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 relative z-10">
-        <label htmlFor="product-images" className="text-sm font-bold text-slate-400 uppercase tracking-tight">URLs das Imagens (Separadas por vírgula)</label>
-        <input 
-          id="product-images"
-          type="text" 
-          name="images" 
-          defaultValue={initialData?.images?.join(", ")} 
-          placeholder="https://exemplo.com/foto1.jpg, https://exemplo.com/foto2.jpg"
-          className="h-12 bg-black/40 border border-white/10 rounded-xl px-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all focus:bg-black/60 shadow-sm" 
+      <div className="flex flex-col gap-4 relative z-10">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-bold text-slate-400 uppercase tracking-tight">Galeria de Fotos</label>
+          <p className="text-xs text-slate-500">Gerencie as imagens que os clientes verão no catálogo.</p>
+        </div>
+        
+        {images.map((url, i) => (
+          <input key={`img-${i}`} type="hidden" name="images" value={url} />
+        ))}
+        
+        <ImageUpload 
+          value={images} 
+          onChange={(urls) => setImages(urls)}
+          onRemove={(url) => setImages(images.filter((i) => i !== url))}
         />
       </div>
 

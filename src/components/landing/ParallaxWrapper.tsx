@@ -44,6 +44,7 @@ export function ParallaxWrapper({ children, imageSrc }: ParallaxWrapperProps) {
            src={imageSrc} 
            alt="Parallax Texture" 
            fill 
+           sizes="100vw"
            className="object-cover opacity-20 pointer-events-none" 
          />
          <div className="absolute inset-0 bg-indigo-950/20 mix-blend-multiply" />

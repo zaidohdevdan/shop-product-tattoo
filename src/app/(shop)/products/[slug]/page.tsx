@@ -51,7 +51,7 @@ export default async function ProductPage({ params }: PageProps) {
           product={{
             name: product.name,
             description: product.description,
-            image: product.images[0] || "/placeholder.png",
+            image: product.images[0] || "/placeholder-fallback.png",
             price: price,
             sku: product.sku,
             slug: product.slug,
@@ -162,7 +162,7 @@ export default async function ProductPage({ params }: PageProps) {
                       id: product.id,
                       name: product.name,
                       price: price,
-                      image: product.images[0] || "/placeholder.png",
+                      image: product.images[0] || "/placeholder-fallback.png",
                       sku: product.sku,
                       slug: product.slug,
                     }}
@@ -172,7 +172,7 @@ export default async function ProductPage({ params }: PageProps) {
                       id: product.id,
                       name: product.name,
                       price: price,
-                      image: product.images[0] || "/placeholder.png",
+                      image: product.images[0] || "/placeholder-fallback.png",
                       sku: product.sku,
                       slug: product.slug,
                     }}

@@ -34,7 +34,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
       id: product.id,
       name: product.name,
       price: Number(product.price),
-      image: product.images[0] || "/placeholder.png",
+      image: product.images[0] || "/placeholder-fallback.png",
       quantity: 1,
       sku: product.sku,
       slug: product.slug,
@@ -54,11 +54,11 @@ export function ProductCard({ product, className }: ProductCardProps) {
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-zinc-950">
         <Image
-          src={product.images[0] || "/placeholder.png"}
+          src={product.images[0] || "/placeholder-fallback.png"}
           alt={product.name}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          className="object-contain p-6 transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         

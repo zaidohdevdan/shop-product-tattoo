@@ -11,7 +11,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col bg-black selection:bg-indigo-500/30">
       <Header />
 
-      <main className="flex-1">
+      <main className="flex-1 relative">
         <Hero />
 
         {/* Featured Products Wrapper for Dynamic Data */}

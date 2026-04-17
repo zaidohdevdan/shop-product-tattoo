@@ -46,7 +46,8 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
               src={images[active]}
               alt={`${name} — imagem ${active + 1}`}
               fill
-              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-contain p-4"
               priority
             />
           </motion.div>
@@ -92,11 +93,11 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
               className={cn(
                 "relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200",
                 active === i
-                  ? "border-indigo-500 opacity-100"
-                  : "border-white/5 opacity-50 hover:opacity-80"
+                  ? "border-indigo-500 opacity-100 bg-zinc-900"
+                  : "border-white/5 opacity-50 hover:opacity-80 bg-zinc-950"
               )}
             >
-              <Image src={src} alt={`Miniatura ${i + 1}`} fill className="object-cover" />
+              <Image src={src} alt={`Miniatura ${i + 1}`} fill sizes="80px" className="object-contain p-2" />
             </button>
           ))}
         </div>
@@ -122,6 +123,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
                 src={images[active]}
                 alt={name}
                 fill
+                sizes="(max-width: 1200px) 100vw, 1024px"
                 className="object-contain"
               />
             </motion.div>

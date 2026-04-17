@@ -69,12 +69,13 @@ export function Testimonials() {
 
               <div className="flex items-center gap-4 border-t border-white/5 pt-6">
                 <div className="relative h-12 w-12 overflow-hidden rounded-full border border-white/10">
-                  <Image
-                    src={testimonial.avatar}
-                    alt={testimonial.name}
-                    fill
-                    className="object-cover"
-                  />
+                    <Image
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      fill
+                      sizes="48px"
+                      className="object-cover"
+                    />
                 </div>
                 <div>
                   <h4 className="font-bold text-white text-sm">{testimonial.name}</h4>

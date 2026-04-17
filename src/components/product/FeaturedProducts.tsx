@@ -4,16 +4,10 @@ import { ProductCard } from "./ProductCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import { productService } from "@/services/product-service";
+
 export async function FeaturedProducts() {
-  const products = await prisma.product.findMany({
-    take: 4,
-    include: {
-      category: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const products = await productService.getFeaturedProducts(4);
 
   if (products.length === 0) return null;
 

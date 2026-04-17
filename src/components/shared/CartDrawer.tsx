@@ -103,6 +103,7 @@ export function CartDrawer() {
                   src="/images/theme/footer-bg.png"
                   alt=""
                   fill
+                  sizes="400px"
                   className="object-cover object-bottom"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-[#020617] via-transparent to-[#020617]/80" />

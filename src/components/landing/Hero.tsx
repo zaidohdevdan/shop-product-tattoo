@@ -22,6 +22,7 @@ export function Hero() {
           src="/images/landing/studio-interior-2.png"
           alt="Tattoo Studio Interior"
           fill
+          sizes="110vw"
           className="object-cover brightness-[0.3]"
           priority
         />
