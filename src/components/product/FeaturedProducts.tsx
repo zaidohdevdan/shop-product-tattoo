@@ -1,5 +1,3 @@
-import React from "react";
-import { prisma } from "@/lib/prisma";
 import { ProductCard } from "./ProductCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
