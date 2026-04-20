@@ -60,6 +60,7 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
       }
 
       toast.success(initialData ? "Produto revisado e salvo com sucesso!" : "Novo produto catalogado e publicado!");
+      router.refresh();
       router.push("/admin/products");
     });
   };

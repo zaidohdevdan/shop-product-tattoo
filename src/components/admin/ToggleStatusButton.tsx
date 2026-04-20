@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { toggleProductStatusAction } from "@/actions/admin-products-actions";
 import { Trash2, Loader2, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ConfirmActionDialog } from "@/components/shared/ConfirmActionDialog";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ interface ToggleButtonProps {
 }
 
 export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -21,6 +23,7 @@ export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
     startTransition(async () => {
       try {
         await toggleProductStatusAction(id, active);
+        router.refresh();
         toast.success(active ? "Produto ocultado da vitrine!" : "Produto restaurado para a loja com sucesso!");
       } catch {
         toast.error("Ocorreu um erro ao alterar o status do produto.");

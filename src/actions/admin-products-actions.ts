@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 export async function toggleProductStatusAction(productId: string, currentStatus: boolean) {
   await prisma.product.update({
@@ -13,6 +12,7 @@ export async function toggleProductStatusAction(productId: string, currentStatus
   // Limpa o cache para todas as rotas relevantes para exibir a mudança instantaneamente
   revalidatePath("/");
   revalidatePath("/products");
+  revalidatePath("/admin", "layout");
   revalidatePath("/admin/products");
 }
 
@@ -63,6 +63,7 @@ export async function saveProductAction(formData: FormData) {
 
     revalidatePath("/");
     revalidatePath("/products");
+    revalidatePath("/admin", "layout");
     revalidatePath("/admin/products");
     
     return { success: true };
