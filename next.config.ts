@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 import withSerwistInit from "@serwist/next";
 
+// Suppress Serwist Turbopack warning (it doesn't support Turbopack yet)
+process.env.SERWIST_SUPPRESS_TURBOPACK_WARNING = "1";
+
 const withSerwist = withSerwistInit({
   swSrc: "src/app/sw.ts",
   swDest: "public/sw.js",
@@ -8,7 +11,8 @@ const withSerwist = withSerwistInit({
 });
 
 const nextConfig: NextConfig = {
-  turbopack: {}, // Silencia o erro do Next.js 16 ao usar Webpack configs (Serwist) com Turbopack
+  // Silences Next.js 16/Turbopack error when using Webpack-based plugins like Serwist
+  turbopack: {}, 
   images: {
     remotePatterns: [
       {
@@ -28,4 +32,3 @@ const nextConfig: NextConfig = {
 };
 
 export default withSerwist(nextConfig);
-
