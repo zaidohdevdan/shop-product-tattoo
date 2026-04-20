@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { saveCouponAction } from "@/actions/coupon-actions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -24,11 +24,8 @@ interface CouponFormProps {
 export function CouponForm({ coupon, onSuccess, onCancel }: CouponFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
-
-    const formData = new FormData(e.currentTarget);
     
     try {
       const result = await saveCouponAction(formData);
@@ -43,10 +40,10 @@ export function CouponForm({ coupon, onSuccess, onCancel }: CouponFormProps) {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form action={handleSubmit} className="space-y-6">
       {coupon && <input type="hidden" name="id" value={coupon.id} />}
       
       <div className="space-y-4">

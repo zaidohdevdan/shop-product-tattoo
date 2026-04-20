@@ -21,7 +21,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
   
   return (
     <div className="p-10 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-black text-white mb-2">Editar Equipamento</h1>
+      <h1 className="text-3xl font-black text-white mb-2">Editar Produto</h1>
       <p className="text-zinc-500 mb-8 max-w-xl leading-relaxed">
         Revisão dos dados fiscais e de vitrine para <span className="text-indigo-400 font-bold">{product.sku}</span>. 
         Suas mudanças serão atualizadas no banco de dados Neon assim que você salvar.

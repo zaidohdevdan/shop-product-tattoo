@@ -21,7 +21,7 @@ export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
     startTransition(async () => {
       try {
         await toggleProductStatusAction(id, active);
-        toast.success(active ? "Equipamento ocultado da vitrine!" : "Equipamento restaurado para a loja com sucesso!");
+        toast.success(active ? "Produto ocultado da vitrine!" : "Produto restaurado para a loja com sucesso!");
       } catch {
         toast.error("Ocorreu um erro ao alterar o status do produto.");
       } finally {
@@ -43,7 +43,7 @@ export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
             ? "text-zinc-500 hover:text-red-400 hover:bg-red-500/10" 
             : "text-zinc-500 hover:text-emerald-400 hover:bg-emerald-500/10"
         )}
-        aria-label={active ? "Ocultar Equipamento" : "Restaurar Anúncio"}
+        aria-label={active ? "Ocultar Produto" : "Restaurar Anúncio"}
       >
         {isPending ? (
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -59,7 +59,7 @@ export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
         onClose={() => setIsOpen(false)}
         onConfirm={handleConfirm}
         isPending={isPending}
-        title={active ? "Ocultar Equipamento?" : "Restaurar Equipamento?"}
+        title={active ? "Ocultar Produto?" : "Restaurar Produto?"}
         description={
           active
             ? "Remover este item da loja pública? Ele não será deletado do banco de dados, apenas ficará invisível para clientes."

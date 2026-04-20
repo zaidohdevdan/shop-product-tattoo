@@ -34,6 +34,7 @@ export function Sidebar() {
           </span>
         </Link>
         <button 
+          type="button"
           title="Abrir Menu"
           onClick={() => setIsOpen(true)}
           className="p-2 rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"

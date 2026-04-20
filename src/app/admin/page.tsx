@@ -21,7 +21,7 @@ export default async function AdminDashboard() {
             <Package className="h-6 w-6 text-indigo-400" />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-zinc-500 uppercase tracking-wider">Equipamentos Ativos</h3>
+            <h3 className="text-sm font-medium text-zinc-500 uppercase tracking-wider">Produtos/Serviços Ativos</h3>
             <p className="text-4xl font-black text-white mt-1">{totalProducts}</p>
           </div>
         </div>

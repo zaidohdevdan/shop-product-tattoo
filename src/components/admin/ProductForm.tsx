@@ -59,7 +59,7 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
         return;
       }
 
-      toast.success(initialData ? "Equipamento revisado e salvo com sucesso!" : "Novo equipamento catalogado e publicado!");
+      toast.success(initialData ? "Produto revisado e salvo com sucesso!" : "Novo produto catalogado e publicado!");
       router.push("/admin/products");
     });
   };
@@ -72,7 +72,7 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
         <div className="flex flex-col gap-2">
-          <label htmlFor="product-name" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Nome do Equipamento</label>
+          <label htmlFor="product-name" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Nome do Produto</label>
           <input 
             id="product-name"
             type="text" 
@@ -204,7 +204,7 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
           {isPending ? <Loader2 className="h-5 w-5 animate-spin mx-4" /> : (
             <span className="flex items-center gap-2">
               <Save className="h-5 w-5" />
-              {initialData ? "Atualizar Equipamento" : "Publicar no Catálogo"}
+              {initialData ? "Atualizar Produto" : "Publicar no Catálogo"}
             </span>
           )}
         </Button>

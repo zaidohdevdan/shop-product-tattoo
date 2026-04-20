@@ -13,7 +13,7 @@ export default async function AdminProductsPage() {
     <div className="p-4 sm:p-6 md:p-10 max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-white">Equipamentos</h1>
+          <h1 className="text-2xl md:text-3xl font-black text-white">Produtos | Serviços</h1>
           <p className="text-xs md:text-sm text-zinc-500 mt-1">Sua vitrine de estoque</p>
         </div>
         <Link 
@@ -107,7 +107,7 @@ export default async function AdminProductsPage() {
                   <td colSpan={7} className="px-6 py-16 text-center">
                     <div className="flex flex-col items-center gap-2">
                        <p className="text-zinc-500 font-medium">Inventário Vazio</p>
-                       <p className="text-xs text-zinc-600">Nenhum equipamento foi cadastrado ainda.</p>
+                       <p className="text-xs text-zinc-600">Nenhum item foi cadastrado ainda.</p>
                     </div>
                   </td>
                 </tr>
