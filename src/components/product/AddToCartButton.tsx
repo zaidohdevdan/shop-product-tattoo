@@ -38,7 +38,7 @@ export function AddToCartButton({ product, className }: AddToCartButtonProps) {
       size="lg"
       disabled={isOutOfStock}
       className={cn(
-        "flex-1 h-14 rounded-2xl border-white/10 bg-white/5 text-white hover:bg-white/10 gap-2 font-bold disabled:opacity-50 disabled:cursor-not-allowed",
+        "w-full h-14 rounded-2xl border-white/10 bg-white/5 text-white hover:bg-white/10 gap-2 font-bold disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}
     >
