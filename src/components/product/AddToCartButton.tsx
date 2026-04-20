@@ -12,6 +12,7 @@ interface AddToCartButtonProps {
     name: string;
     price: number;
     image: string;
+    stock: number;
     sku: string;
     slug: string;
   };
@@ -20,8 +21,10 @@ interface AddToCartButtonProps {
 
 export function AddToCartButton({ product, className }: AddToCartButtonProps) {
   const addItem = useCartStore((state) => state.addItem);
+  const isOutOfStock = product.stock <= 0;
 
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
     addItem({
       ...product,
       quantity: 1,
@@ -33,13 +36,14 @@ export function AddToCartButton({ product, className }: AddToCartButtonProps) {
       onClick={handleAddToCart}
       variant="outline"
       size="lg"
+      disabled={isOutOfStock}
       className={cn(
-        "flex-1 h-14 rounded-2xl border-white/10 bg-white/5 text-white hover:bg-white/10 gap-2 font-bold",
+        "flex-1 h-14 rounded-2xl border-white/10 bg-white/5 text-white hover:bg-white/10 gap-2 font-bold disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}
     >
       <ShoppingCart className="h-5 w-5" />
-      Adicionar ao Carrinho
+      {isOutOfStock ? "Esgotado" : "Adicionar ao Carrinho"}
     </Button>
   );
 }

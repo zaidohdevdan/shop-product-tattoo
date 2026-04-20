@@ -7,6 +7,7 @@ export interface CartItem {
   price: number;
   image: string;
   quantity: number;
+  stock: number;
   sku: string;
   slug: string;
 }
@@ -44,10 +45,18 @@ export const useCartStore = create<CartStore>()(
 
         if (existingItemIndex > -1) {
           const updatedItems = [...currentItems];
-          updatedItems[existingItemIndex].quantity += item.quantity;
-          set({ items: updatedItems, isOpen: true });
+          const currentQty = updatedItems[existingItemIndex].quantity;
+          
+          // Enforce stock limit
+          if (currentQty < item.stock) {
+            updatedItems[existingItemIndex].quantity += 1;
+            set({ items: updatedItems, isOpen: true });
+          }
         } else {
-          set({ items: [...currentItems, item], isOpen: true });
+          // If first add, ensure we don't exceed stock (though item.quantity is usually 1)
+          if (item.stock > 0) {
+            set({ items: [...currentItems, item], isOpen: true });
+          }
         }
       },
 
@@ -57,10 +66,16 @@ export const useCartStore = create<CartStore>()(
 
       updateQuantity: (id, quantity) => {
         if (quantity < 1) return;
+        
         set({
-          items: get().items.map((i) =>
-            i.id === id ? { ...i, quantity } : i
-          ),
+          items: get().items.map((i) => {
+            if (i.id === id) {
+              // Clamp quantity to stock
+              const finalQty = Math.min(quantity, i.stock);
+              return { ...i, quantity: finalQty };
+            }
+            return i;
+          }),
         });
       },
 

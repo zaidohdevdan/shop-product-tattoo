@@ -6,6 +6,8 @@ import { ShoppingBag, X, Plus, Minus, Trash2, MessageCircle } from "lucide-react
 import { useCartStore } from "@/lib/store/cart-store";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { createOrderAction } from "@/actions/order-actions";
+import { toast } from "sonner";
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5585981025033";
 
@@ -23,6 +25,7 @@ export function CartDrawer() {
   const clearCart = useCartStore((state) => state.clearCart);
 
   const [itemToRemove, setItemToRemove] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!_hasHydrated) return;
@@ -40,34 +43,66 @@ export function CartDrawer() {
 
   if (!_hasHydrated) return null;
 
-  const handleCheckout = () => {
-    if (!customerName.trim()) return;
+  const handleCheckout = async () => {
+    if (!customerName.trim() || isSubmitting) return;
 
-    const messageHeader = `Olá! Meu nome é *${customerName.trim()}* e gostaria de fazer um pedido:\n\n`;
-    const itemsList = items
-      .map(
-        (item) =>
-          `• ${item.name} (${item.quantity}x) - R$ ${(
-            item.price * item.quantity
-          ).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
-      )
-      .join("\n");
-    const messageFooter = `\n\n*Total: R$ ${totalPrice().toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-    })}*`;
-    
-    const fullMessage = messageHeader + itemsList + messageFooter;
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-      fullMessage
-    )}`;
-    
-    window.open(whatsappUrl, "_blank");
-    
-    // Clear cart and close drawer after checkout
-    setTimeout(() => {
-      clearCart();
-      setOpen(false);
-    }, 100);
+    setIsSubmitting(true);
+
+    try {
+      // 1. Criar o pedido no banco e validar estoque no servidor
+      const result = await createOrderAction(
+        customerName.trim(),
+        items.map(item => ({
+          id: item.id,
+          quantity: item.quantity,
+          price: item.price
+        }))
+      );
+
+      if (result.error) {
+        toast.error(result.error);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 2. Construir mensagem do WhatsApp com o link de confirmação do vendedor
+      const confirmationLink = `${window.location.origin}/confirm-order/${result.sellerToken}`;
+      
+      const messageHeader = `Olá! Meu nome é *${customerName.trim()}* e gostaria de fazer um pedido:\n\n`;
+      const itemsList = items
+        .map(
+          (item) =>
+            `• ${item.name} (${item.quantity}x) - R$ ${(
+              item.price * item.quantity
+            ).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
+        )
+        .join("\n");
+        
+      const messageFooter = `\n\n*Total: R$ ${totalPrice().toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+      })}*`;
+      
+      const sellerInfo = `\n\n--- 🔐 ÁREA DO VENDEDOR ---\nConfirme este pedido aqui: ${confirmationLink}`;
+      
+      const fullMessage = messageHeader + itemsList + messageFooter + sellerInfo;
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+        fullMessage
+      )}`;
+      
+      window.open(whatsappUrl, "_blank");
+      
+      // 3. Limpar carrinho e fechar após sucesso
+      setTimeout(() => {
+        clearCart();
+        setOpen(false);
+        setIsSubmitting(false);
+      }, 500);
+
+    } catch (error) {
+      console.error("Erro no checkout:", error);
+      toast.error("Ocorreu um erro ao processar seu pedido.");
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -270,11 +305,20 @@ export function CartDrawer() {
                     size="lg"
                     className="w-full gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handleCheckout}
-                    disabled={!customerName.trim()}
+                    disabled={!customerName.trim() || isSubmitting}
                     aria-label="Finalizar pedido pelo WhatsApp"
                   >
-                    <MessageCircle className="h-5 w-5 fill-current" />
-                    Finalizar via WhatsApp
+                    {isSubmitting ? (
+                      <span className="flex items-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                        Processando...
+                      </span>
+                    ) : (
+                      <>
+                        <MessageCircle className="h-5 w-5 fill-current" />
+                        Finalizar via WhatsApp
+                      </>
+                    )}
                   </Button>
                   <p className="mt-4 text-center text-[9px] text-slate-600 uppercase tracking-widest font-black">
                     Consulte frete e prazos no atendimento

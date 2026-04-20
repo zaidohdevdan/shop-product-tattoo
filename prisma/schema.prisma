@@ -16,19 +16,20 @@ model Category {
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   name        String
-  slug        String   @unique
+  slug        String      @unique
   description String
-  price       Decimal  @db.Decimal(10, 2)
-  sku         String   @unique
+  price       Decimal     @db.Decimal(10, 2)
+  sku         String      @unique
   images      String[]
-  active      Boolean  @default(true)
-  stock       Int      @default(0)
+  active      Boolean     @default(true)
+  stock       Int         @default(0)
   categoryId  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  category    Category @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  category    Category    @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
 
   @@index([categoryId])
   @@index([slug])
@@ -42,4 +43,31 @@ model Post {
   published Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  customerName String
+  totalPrice   Decimal     @db.Decimal(10, 2)
+  status       OrderStatus @default(PENDING)
+  sellerToken  String      @unique @default(uuid())
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  items        OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }

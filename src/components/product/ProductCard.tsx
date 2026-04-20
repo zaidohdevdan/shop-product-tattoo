@@ -13,6 +13,7 @@ interface ProductCardProps {
     slug: string;
     price: number | string;
     sku: string;
+    stock: number;
     images: string[];
     category: {
       name: string;
@@ -26,16 +27,20 @@ import { Button } from "@/components/ui/button";
 
 export function ProductCard({ product, className }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem);
+  const isOutOfStock = product.stock <= 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isOutOfStock) return;
+
     addItem({
       id: product.id,
       name: product.name,
       price: Number(product.price),
       image: product.images[0] || "/placeholder-fallback.png",
       quantity: 1,
+      stock: product.stock,
       sku: product.sku,
       slug: product.slug,
     });
@@ -48,6 +53,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
       viewport={{ once: true }}
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-[2rem] border border-white/5 bg-zinc-900/50 transition-all hover:bg-zinc-900",
+        isOutOfStock && "opacity-80 grayscale-[0.5]",
         className
       )}
     >
@@ -58,8 +64,20 @@ export function ProductCard({ product, className }: ProductCardProps) {
           alt={product.name}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-          className="object-contain p-6 transition-transform duration-500 group-hover:scale-110"
+          className={cn(
+            "object-contain p-6 transition-transform duration-500",
+            !isOutOfStock && "group-hover:scale-110"
+          )}
         />
+        
+        {isOutOfStock && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-[2px]">
+            <span className="rounded-full bg-red-500 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-red-900/40">
+              Esgotado
+            </span>
+          </div>
+        )}
+
         <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         
         {/* Quick Buy Overlay — Visible by default on mobile, hover on desktop */}
@@ -74,7 +92,8 @@ export function ProductCard({ product, className }: ProductCardProps) {
             variant="premium"
             size="icon"
             onClick={handleAddToCart}
-            className="h-12 w-12 rounded-xl"
+            disabled={isOutOfStock}
+            className="h-12 w-12 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Adicionar ao carrinho"
           >
             <ShoppingCart className="h-5 w-5" />
@@ -89,7 +108,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
             {product.category?.name || "Geral"}
           </span>
           <span className="text-[10px] font-medium text-zinc-500">
-            SKU: {product.sku}
+            {isOutOfStock ? "SEM ESTOQUE" : `ESTOQUE: ${product.stock}`}
           </span>
         </div>
         

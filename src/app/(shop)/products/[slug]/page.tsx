@@ -163,6 +163,7 @@ export default async function ProductPage({ params }: PageProps) {
                       name: product.name,
                       price: price,
                       image: product.images[0] || "/placeholder-fallback.png",
+                      stock: product.stock,
                       sku: product.sku,
                       slug: product.slug,
                     }}
@@ -173,6 +174,7 @@ export default async function ProductPage({ params }: PageProps) {
                       name: product.name,
                       price: price,
                       image: product.images[0] || "/placeholder-fallback.png",
+                      stock: product.stock,
                       sku: product.sku,
                       slug: product.slug,
                     }}
