@@ -4,7 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { OrderStatus } from "@prisma/client";
 
-export async function createOrderAction(customerName: string, items: { id: string, quantity: number, price: number }[]) {
+export async function createOrderAction(
+  customerName: string, 
+  items: { id: string, quantity: number, price: number }[],
+  couponCode?: string
+) {
   try {
     // 1. Validar estoque de todos os itens no servidor
     for (const item of items) {
@@ -20,27 +24,61 @@ export async function createOrderAction(customerName: string, items: { id: strin
       }
     }
 
-    // 2. Calcular total
-    const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    // 2. Calcular subtotal
+    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    let total = subtotal;
+    let discountAmount = 0;
+    let couponId: string | undefined;
 
-    // 3. Criar o pedido (Status PENDING por padrão)
-    const order = await prisma.order.create({
-      data: {
-        customerName,
-        totalPrice: total,
-        status: OrderStatus.PENDING,
-        items: {
-          create: items.map(item => ({
-            productId: item.id,
-            quantity: item.quantity,
-            price: item.price,
-          }))
+    // 3. Validar cupom no servidor se fornecido
+    if (couponCode) {
+      const coupon = await prisma.coupon.findUnique({
+        where: { code: couponCode.toUpperCase() }
+      });
+
+      if (coupon && coupon.active && (!coupon.expiresAt || new Date() <= coupon.expiresAt) && (!coupon.maxUses || coupon.usedCount < coupon.maxUses)) {
+        couponId = coupon.id;
+        
+        if (coupon.discountType === "PERCENTAGE") {
+          discountAmount = subtotal * (Number(coupon.discountValue) / 100);
+        } else {
+          discountAmount = Number(coupon.discountValue);
         }
-      },
-      select: {
-        id: true,
-        sellerToken: true
+        
+        total = Math.max(0, subtotal - discountAmount);
       }
+    }
+
+    // 4. Criar o pedido (Status PENDING por padrão) em uma transação para atualizar o contador do cupom
+    const order = await prisma.$transaction(async (tx) => {
+      // Incrementar uso do cupom se existir
+      if (couponId) {
+        await tx.coupon.update({
+          where: { id: couponId },
+          data: { usedCount: { increment: 1 } }
+        });
+      }
+
+      return await tx.order.create({
+        data: {
+          customerName,
+          totalPrice: total,
+          discountAmount: discountAmount,
+          couponId: couponId,
+          status: OrderStatus.PENDING,
+          items: {
+            create: items.map(item => ({
+              productId: item.id,
+              quantity: item.quantity,
+              price: item.price,
+            }))
+          }
+        },
+        select: {
+          id: true,
+          sellerToken: true
+        }
+      });
     });
 
     return { success: true, orderId: order.id, sellerToken: order.sellerToken };

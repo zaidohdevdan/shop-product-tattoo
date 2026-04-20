@@ -52,14 +52,17 @@ enum OrderStatus {
 }
 
 model Order {
-  id           String      @id @default(cuid())
-  customerName String
-  totalPrice   Decimal     @db.Decimal(10, 2)
-  status       OrderStatus @default(PENDING)
-  sellerToken  String      @unique @default(uuid())
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  items        OrderItem[]
+  id              String      @id @default(cuid())
+  customerName    String
+  totalPrice      Decimal     @db.Decimal(10, 2)
+  status          OrderStatus @default(PENDING)
+  sellerToken     String      @unique @default(uuid())
+  couponId        String?
+  discountAmount  Decimal?    @db.Decimal(10, 2)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+  coupon          Coupon?     @relation(fields: [couponId], references: [id])
 }
 
 model OrderItem {
@@ -70,4 +73,23 @@ model OrderItem {
   price     Decimal @db.Decimal(10, 2)
   order     Order   @relation(fields: [orderId], references: [id])
   product   Product @relation(fields: [productId], references: [id])
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED
+}
+
+model Coupon {
+  id            String      @id @default(cuid())
+  code          String      @unique
+  discountValue Decimal     @db.Decimal(10, 2)
+  discountType  CouponType  @default(PERCENTAGE)
+  maxUses       Int?        @default(0)
+  usedCount     Int         @default(0)
+  active        Boolean     @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  orders        Order[]
 }

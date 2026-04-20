@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Tag, Settings, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Package, Tag, Settings, LogOut, Menu, X, Ticket } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/actions/auth-actions";
 import Image from "next/image";
@@ -13,6 +13,7 @@ const navItems = [
   { href: "/admin", label: "Painel", icon: LayoutDashboard },
   { href: "/admin/products", label: "Equipamentos", icon: Package },
   { href: "/admin/categories", label: "Categorias", icon: Tag },
+  { href: "/admin/coupons", label: "Cupons", icon: Ticket },
   { href: "/admin/settings", label: "Configurações", icon: Settings },
 ];
 

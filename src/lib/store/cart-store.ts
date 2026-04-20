@@ -12,9 +12,16 @@ export interface CartItem {
   slug: string;
 }
 
+export interface AppliedCoupon {
+  code: string;
+  discountValue: number;
+  discountType: "PERCENTAGE" | "FIXED";
+}
+
 export interface CartStore {
   items: CartItem[];
   customerName: string;
+  appliedCoupon: AppliedCoupon | null;
   isOpen: boolean;
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
@@ -25,6 +32,8 @@ export interface CartStore {
   setCustomerName: (name: string) => void;
   toggleCart: () => void;
   setOpen: (open: boolean) => void;
+  applyCoupon: (coupon: AppliedCoupon) => void;
+  removeCoupon: () => void;
   totalItems: () => number;
   totalPrice: () => number;
 }
@@ -34,6 +43,7 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       customerName: "",
+      appliedCoupon: null,
       isOpen: false,
       _hasHydrated: false,
 
@@ -79,7 +89,7 @@ export const useCartStore = create<CartStore>()(
         });
       },
 
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], appliedCoupon: null }),
       
       setCustomerName: (customerName) => set({ customerName }),
 
@@ -87,15 +97,28 @@ export const useCartStore = create<CartStore>()(
       
       setOpen: (open) => set({ isOpen: open }),
 
+      applyCoupon: (appliedCoupon) => set({ appliedCoupon }),
+      
+      removeCoupon: () => set({ appliedCoupon: null }),
+
       totalItems: () => {
         return get().items.reduce((total, item) => total + item.quantity, 0);
       },
 
       totalPrice: () => {
-        return get().items.reduce(
+        const subtotal = get().items.reduce(
           (total, item) => total + item.price * item.quantity,
           0
         );
+
+        const coupon = get().appliedCoupon;
+        if (!coupon) return subtotal;
+
+        if (coupon.discountType === "PERCENTAGE") {
+          return subtotal * (1 - coupon.discountValue / 100);
+        }
+
+        return Math.max(0, subtotal - coupon.discountValue);
       },
     }),
     {
