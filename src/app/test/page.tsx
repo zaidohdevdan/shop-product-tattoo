@@ -22,6 +22,7 @@ export default function TestPage() {
               id: "test-id-1",
               name: "Máquina de Tatuagem Pro Stealth",
               price: 1999.90,
+              stock: 10,
               image: "/placeholder-fallback.png",
               sku: "TAT-001",
               slug: "maquina-de-tatuagem-pro-stealth",

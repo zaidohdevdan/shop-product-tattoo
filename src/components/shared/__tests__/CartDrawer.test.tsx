@@ -40,6 +40,7 @@ describe('CartDrawer Component', () => {
       price: 100,
       image: '/test.jpg',
       quantity: 1,
+      stock: 10,
       sku: 'TEST-123',
       slug: 'test-product',
     },
