@@ -131,7 +131,8 @@ export async function confirmOrderAction(token: string, confirmed: boolean) {
       ]);
 
       revalidatePath("/admin/products");
-      revalidatePath("/admin/inventory"); // Assumindo que pode existir
+      revalidatePath("/admin");
+      revalidatePath("/admin/inventory");
       revalidatePath("/");
       
       return { success: true, message: "Venda confirmada e estoque atualizado!" };
@@ -142,6 +143,7 @@ export async function confirmOrderAction(token: string, confirmed: boolean) {
         data: { status: OrderStatus.CANCELLED }
       });
 
+      revalidatePath("/admin");
       return { success: true, message: "Pedido cancelado. O estoque não foi alterado." };
     }
   } catch (error) {

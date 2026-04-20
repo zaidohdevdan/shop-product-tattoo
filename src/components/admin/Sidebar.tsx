@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
   { href: "/admin", label: "Painel", icon: LayoutDashboard },
-  { href: "/admin/products", label: "Equipamentos", icon: Package },
+  { href: "/admin/products", label: "Produtos", icon: Package },
   { href: "/admin/categories", label: "Categorias", icon: Tag },
   { href: "/admin/coupons", label: "Cupons", icon: Ticket },
   { href: "/admin/settings", label: "Configurações", icon: Settings },
@@ -33,7 +33,7 @@ export function Sidebar() {
             Shop<span className="text-indigo-500">Admin</span>
           </span>
         </Link>
-        <button 
+        <button
           type="button"
           title="Abrir Menu"
           onClick={() => setIsOpen(true)}
@@ -47,14 +47,14 @@ export function Sidebar() {
       <AnimatePresence>
         {isOpen && (
           <>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
               className="fixed inset-0 bg-black/60 backdrop-blur-md z-[60] md:hidden"
             />
-            <motion.div 
+            <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
@@ -68,7 +68,7 @@ export function Sidebar() {
                     Shop<span className="text-indigo-500">Admin</span>
                   </span>
                 </Link>
-                <button 
+                <button
                   title="Fechar Menu"
                   onClick={() => setIsOpen(false)}
                   className="p-2 rounded-xl text-zinc-500 bg-white/5 hover:text-white hover:bg-white/10 transition-colors"

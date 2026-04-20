@@ -1,18 +1,21 @@
 import React from "react";
 import { productService } from "@/services/product-service";
 import { Package, Tag, AlertCircle } from "lucide-react";
+import { DashboardRefresher } from "@/components/admin/DashboardRefresher";
 
 export default async function AdminDashboard() {
   // Fetch active products initially for the dashboard overview
   const products = await productService.getProducts({});
   const totalProducts = products.length;
   const lowStock = products.filter(p => p.stock < 5 && p.stock > 0).length;
-  const outOfStock = products.filter(p => p.stock === 0).length;
+  const outOfStockProducts = products.filter(p => p.stock === 0);
+  const outOfStockCount = outOfStockProducts.length;
   
   const uniqueCategories = new Set(products.map(p => p.categoryId)).size;
 
   return (
     <div className="p-10 max-w-6xl mx-auto">
+      <DashboardRefresher />
       <h1 className="text-3xl font-black text-white mb-8">Painel de Controle</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -36,7 +39,7 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        <div className="p-6 rounded-[2rem] border border-red-500/10 bg-red-500/5 flex flex-col gap-4 shadow-xl">
+        <div className="p-6 rounded-[2rem] border border-red-500/20 bg-red-500/5 flex flex-col gap-4 shadow-xl">
           <div className="h-12 w-12 rounded-2xl bg-red-500/20 flex items-center justify-center">
             <AlertCircle className="h-6 w-6 text-red-500" />
           </div>
@@ -44,9 +47,27 @@ export default async function AdminDashboard() {
             <h3 className="text-sm font-medium text-red-500/70 uppercase tracking-wider flex justify-between">
               Estoque Crítico
             </h3>
-            <div className="flex items-baseline gap-2 mt-1">
-              <p className="text-4xl font-black text-red-400">{lowStock + outOfStock}</p>
-              <span className="text-sm text-red-500/50">itens pedindo reposição</span>
+            <div className="flex flex-col gap-1 mt-1">
+              <div className="flex items-baseline gap-2">
+                <p className="text-4xl font-black text-red-400">{lowStock + outOfStockCount}</p>
+                <span className="text-xs text-red-500/50 uppercase font-bold tracking-widest">itens pendentes</span>
+              </div>
+              
+              {outOfStockCount > 0 && (
+                <div className="mt-3 space-y-1.5 border-t border-red-500/10 pt-3">
+                  <p className="text-[10px] font-black text-red-500/80 uppercase tracking-[0.2em] mb-2">Esgotados:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {outOfStockProducts.slice(0, 5).map(p => (
+                      <span key={p.id} className="text-[10px] font-bold bg-red-500/20 text-red-200 px-2 py-0.5 rounded-md border border-red-500/20 max-w-[140px] truncate">
+                        {p.name}
+                      </span>
+                    ))}
+                    {outOfStockCount > 5 && (
+                      <span className="text-[10px] font-bold text-red-500/50 italic">+ {outOfStockCount - 5} outros</span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
