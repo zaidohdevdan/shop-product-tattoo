@@ -1,6 +1,7 @@
 import React from "react";
 import { DollarSign, ShoppingBag, TrendingUp, TrendingDown } from "lucide-react";
 import { DashboardMetrics } from "@/services/sales-service";
+import { cn } from "@/lib/utils";
 
 interface DashboardStatsProps {
   metrics: DashboardMetrics;
@@ -46,32 +47,37 @@ export function DashboardStats({ metrics }: DashboardStatsProps) {
       {stats.map((stat, idx) => (
         <div 
           key={idx} 
-          className={`p-6 rounded-[2rem] border ${stat.border} bg-zinc-950 flex flex-col gap-4 shadow-xl relative overflow-hidden`}
+          className="premium-card p-8 flex flex-col gap-6 group"
         >
-          {/* Subtle Accent */}
-          <div className={`absolute top-0 right-0 w-32 h-32 ${stat.bg} blur-3xl -translate-y-16 translate-x-16 pointer-events-none`} />
-          
-          <div className="flex justify-between items-start">
-            <div className={`h-10 w-10 rounded-xl ${stat.bg} border border-white/5 flex items-center justify-center`}>
+          <div className="flex justify-between items-start z-10">
+            <div className={cn(
+              "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110",
+              stat.bg,
+              "border border-white/[0.03]"
+            )}>
               {stat.icon}
             </div>
+            
             {stat.growth !== null ? (
-              <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${
-                stat.growth >= 0 ? "text-emerald-400 bg-emerald-400/10" : "text-red-400 bg-red-400/10"
-              }`}>
+              <div className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
+                stat.growth >= 0 
+                  ? "text-emerald-700 bg-emerald-50 border-emerald-100" 
+                  : "text-rose-700 bg-rose-50 border-rose-100"
+              )}>
                 {stat.growth >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 {Math.abs(stat.growth).toFixed(1)}%
               </div>
             ) : (
-              <div className="text-[9px] font-black uppercase tracking-tight text-zinc-600 bg-white/5 px-2 py-1 rounded-lg">
-                Sem dados anteriores
+              <div className="text-[9px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
+                Initial
               </div>
             )}
           </div>
 
-          <div>
-            <h3 className="text-sm font-medium text-zinc-500 uppercase tracking-widest">{stat.label}</h3>
-            <p className="text-3xl font-black text-white mt-1.5 tracking-tight">{stat.value}</p>
+          <div className="space-y-1">
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</h3>
+            <p className="text-2xl font-black text-slate-900 tracking-tight">{stat.value}</p>
           </div>
         </div>
       ))}

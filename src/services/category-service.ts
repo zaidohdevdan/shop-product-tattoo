@@ -2,14 +2,30 @@ import { prisma } from "@/lib/prisma";
 
 export const categoryService = {
   /**
-   * Retorna todas as categorias ordenadas por nome
+   * Retorna categorias com suporte a paginação
    */
-  async getAllCategories() {
+  async getAllCategories(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    
     return prisma.category.findMany({
+      include: {
+        _count: {
+          select: { products: true }
+        }
+      },
       orderBy: {
         name: "asc",
       },
+      skip,
+      take: limit,
     });
+  },
+
+  /**
+   * Retorna a contagem total de categorias
+   */
+  async getCategoriesCount() {
+    return prisma.category.count();
   },
 
   /**

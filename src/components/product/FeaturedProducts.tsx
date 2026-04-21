@@ -24,9 +24,11 @@ export async function FeaturedProducts() {
           <Button
             variant="ghost"
             asChild
-            className="text-sm font-bold uppercase tracking-widest text-white/50 transition-colors hover:text-indigo-500 hover:bg-transparent p-0"
+            className="text-sm font-bold uppercase tracking-widest text-white/50 transition-colors hover:text-indigo-400 hover:bg-transparent p-0 md:px-0 animate-premium-glow group"
           >
-            <Link href="/products">Ver catálogo completo →</Link>
+            <Link href="/products">
+              Ver catálogo completo <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+            </Link>
           </Button>
         </div>
 

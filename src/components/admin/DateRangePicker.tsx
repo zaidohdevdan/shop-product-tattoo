@@ -27,16 +27,16 @@ export function DateRangePicker() {
   };
 
   return (
-    <div className="flex flex-wrap gap-2 mb-8 bg-zinc-900/50 p-1.5 rounded-2xl border border-white/5 w-fit">
+    <div className="flex flex-wrap gap-2 mb-8 bg-slate-200/40 p-1.5 rounded-2xl border border-slate-200 w-fit">
       {ranges.map((range) => (
         <button
           key={range.value}
           onClick={() => handleRangeChange(range.value)}
           className={cn(
-            "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+            "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
             currentRange === range.value
-              ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
-              : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+              ? "bg-indigo-600 text-white shadow-md shadow-indigo-100"
+              : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/60"
           )}
         >
           {range.label}

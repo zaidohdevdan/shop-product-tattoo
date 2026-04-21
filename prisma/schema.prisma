@@ -28,8 +28,9 @@ model Product {
   categoryId  String
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  category    Category    @relation(fields: [categoryId], references: [id])
+  costPrice   Decimal     @default(0.00) @db.Decimal(10, 2)
   orderItems  OrderItem[]
+  category    Category    @relation(fields: [categoryId], references: [id])
 
   @@index([categoryId])
   @@index([slug])
@@ -45,24 +46,18 @@ model Post {
   updatedAt DateTime @updatedAt
 }
 
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  CANCELLED
-}
-
 model Order {
-  id              String      @id @default(cuid())
-  customerName    String
-  totalPrice      Decimal     @db.Decimal(10, 2)
-  status          OrderStatus @default(PENDING)
-  sellerToken     String      @unique @default(uuid())
-  couponId        String?
-  discountAmount  Decimal?    @db.Decimal(10, 2)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  items           OrderItem[]
-  coupon          Coupon?     @relation(fields: [couponId], references: [id])
+  id             String      @id @default(cuid())
+  customerName   String
+  totalPrice     Decimal     @db.Decimal(10, 2)
+  status         OrderStatus @default(PENDING)
+  sellerToken    String      @unique @default(uuid())
+  couponId       String?
+  discountAmount Decimal?    @db.Decimal(10, 2)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  coupon         Coupon?     @relation(fields: [couponId], references: [id])
+  items          OrderItem[]
 }
 
 model OrderItem {
@@ -75,21 +70,27 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
 }
 
+model Coupon {
+  id            String     @id @default(cuid())
+  code          String     @unique
+  discountValue Decimal    @db.Decimal(10, 2)
+  discountType  CouponType @default(PERCENTAGE)
+  maxUses       Int?       @default(0)
+  usedCount     Int        @default(0)
+  active        Boolean    @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  orders        Order[]
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
 enum CouponType {
   PERCENTAGE
   FIXED
-}
-
-model Coupon {
-  id            String      @id @default(cuid())
-  code          String      @unique
-  discountValue Decimal     @db.Decimal(10, 2)
-  discountType  CouponType  @default(PERCENTAGE)
-  maxUses       Int?        @default(0)
-  usedCount     Int         @default(0)
-  active        Boolean     @default(true)
-  expiresAt     DateTime?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  orders        Order[]
 }

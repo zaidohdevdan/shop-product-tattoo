@@ -1,103 +1,120 @@
 import React from 'react';
-import { prisma } from '@/lib/prisma';
-import { Tag, Plus } from 'lucide-react';
+import { categoryService } from '@/services/category-service';
+import { Tag, Plus, FolderSearch } from 'lucide-react';
 import { saveCategoryAction } from '@/actions/admin-categories-actions';
 import { DeleteCategoryButton } from '@/components/admin/DeleteCategoryButton';
+import { Pagination } from '@/components/admin/Pagination';
 
-export default async function AdminCategoriesPage() {
-  const categories = await prisma.category.findMany({
-    include: {
-      _count: {
-        select: { products: true }
-      }
-    },
-    orderBy: { createdAt: 'desc' }
-  });
+interface PageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AdminCategoriesPage({ searchParams }: PageProps) {
+  const { page } = await searchParams;
+  const currentPage = Number(page) || 1;
+  const limit = 10;
+
+  const categories = await categoryService.getAllCategories(currentPage, limit);
+  const totalCategories = await categoryService.getCategoriesCount();
+  const totalPages = Math.ceil(totalCategories / limit);
 
   return (
-    <div className="p-4 sm:p-6 md:p-10 max-w-5xl mx-auto">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+    <div className="p-10 max-w-7xl mx-auto space-y-10 selection:bg-indigo-600 selection:text-white">
+      <div className="flex flex-col md:flex-row items-end md:items-center justify-between gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-white">Categorias</h1>
-          <p className="text-xs md:text-sm text-zinc-500 mt-1">Organize e divida as seções do seu catálogo</p>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="h-8 w-1.5 bg-indigo-600 rounded-full" />
+            <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Taxonomia do Catálogo</h1>
+          </div>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-4.5">Estrutura de Categorias e Navegação</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-        {/* Formulário Fixo Lateral */}
-        <div className="md:col-span-1 sticky top-6">
-          <form action={saveCategoryAction} className="bg-zinc-950 p-6 rounded-3xl border border-white/5 shadow-2xl flex flex-col gap-5">
-            <div className="flex items-center gap-3 border-b border-white/5 pb-4">
-              <div className="p-2 bg-indigo-500/10 rounded-xl">
-                 <Tag className="h-5 w-5 text-indigo-400" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* Formulário Lateral */}
+        <div className="lg:col-span-1 sticky top-10 animate-in fade-in slide-in-from-left-4 duration-700">
+          <form action={saveCategoryAction} className="premium-card p-10 flex flex-col gap-8 shadow-md">
+            <div className="flex items-center gap-4 border-b border-slate-100 pb-8">
+              <div className="h-12 w-12 bg-indigo-50 rounded-xl flex items-center justify-center border border-indigo-100 group-hover:scale-110 transition-transform">
+                 <Tag className="h-5 w-5 text-indigo-600" />
               </div>
-              <h3 className="text-white font-bold">Criar Nova</h3>
+              <div>
+                <h3 className="text-slate-900 font-black uppercase tracking-tight text-lg">Nova Entrada</h3>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Registrar Categoria</p>
+              </div>
             </div>
             
-            <label className="flex flex-col gap-2">
-              <span className="text-xs font-bold text-zinc-400">Nome Oficial</span>
-              <input 
-                type="text" 
-                name="name" 
-                placeholder="Ex: Máquinas Pen"
-                required 
-                className="h-12 bg-black/50 border border-white/10 rounded-xl px-4 text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" 
-              />
-            </label>
+            <div className="space-y-6">
+              <label className="flex flex-col gap-2.5">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nome da Categoria</span>
+                <input 
+                  type="text" 
+                  name="name" 
+                  placeholder="Ex: Maquinário Técnico"
+                  required 
+                  className="h-14 bg-slate-50 border border-slate-200 rounded-xl px-5 text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-sm" 
+                />
+              </label>
 
-            <button 
-              type="submit" 
-              className="mt-2 h-12 w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg shadow-indigo-900/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
-            >
-              <Plus className="h-5 w-5" /> Cadastrar Categoria
-            </button>
-            <p className="text-[10px] text-zinc-500 text-center uppercase tracking-widest font-bold">
-              O Hash (URL Slug) será gerado automaticamente
-            </p>
+              <button 
+                type="submit" 
+                className="h-14 w-full rounded-xl bg-zinc-900 hover:bg-indigo-600 text-white font-black uppercase tracking-widest shadow-lg shadow-zinc-900/10 transition-all active:scale-95 flex items-center justify-center gap-3 text-[11px]"
+              >
+                <Plus className="h-4 w-4" /> 
+                <span>Cadastrar Agora</span>
+              </button>
+            </div>
           </form>
         </div>
 
-        {/* Tabela de Dados */}
-        <div className="md:col-span-2">
-          <div className="bg-zinc-950 border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
+        {/* Tabela de Categorias */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="premium-card overflow-hidden animate-in fade-in slide-in-from-right-4 duration-700 shadow-md">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[500px]">
                 <thead>
-                  <tr className="border-b border-white/5 bg-black/20">
-                    <th className="px-6 py-5 text-xs font-bold text-zinc-400 uppercase tracking-wider">Identificação</th>
-                    <th className="px-6 py-5 text-xs font-bold text-zinc-400 uppercase tracking-wider text-right">Cadastros Ativos</th>
-                    <th className="px-6 py-5 text-right">Ação</th>
+                  <tr className="border-b border-slate-100 bg-slate-50/50">
+                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Identificação</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Cadastros</th>
+                    <th className="px-8 py-5 text-right"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-slate-100">
                   {categories.map((cat) => (
-                    <tr key={cat.id} className="hover:bg-white/5 transition-colors group">
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-4">
-                          <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
-                            <span className="font-black text-zinc-500">{cat.name.charAt(0)}</span>
+                    <tr key={cat.id} className="hover:bg-slate-50/50 transition-colors group">
+                      <td className="px-8 py-5">
+                        <div className="flex items-center gap-5">
+                          <div className="h-10 w-10 rounded-lg bg-slate-50 flex items-center justify-center shrink-0 border border-slate-200 group-hover:border-indigo-200 transition-all">
+                            <span className="font-black text-slate-400 group-hover:text-indigo-600 transition-colors text-xs">{cat.name.charAt(0)}</span>
                           </div>
                           <div>
-                             <p className="font-bold text-white tracking-tight">{cat.name}</p>
-                             <p className="text-xs font-medium text-emerald-500 bg-emerald-500/10 inline-flex px-2 py-0.5 rounded-full mt-1">/{cat.slug}</p>
+                             <p className="font-black text-slate-900 tracking-tight uppercase group-hover:text-indigo-600 transition-colors text-xs">{cat.name}</p>
+                             <p className="text-[9px] font-black text-indigo-600/70 uppercase tracking-widest mt-1">/{cat.slug}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-5 text-sm font-bold text-zinc-300 text-right">
-                        <span className="bg-white/5 px-3 py-1.5 rounded-xl border border-white/5">
-                          {cat._count.products} item{cat._count.products !== 1 && 's'}
+                      <td className="px-8 py-5 text-right">
+                        <span className="executive-badge bg-slate-50 text-slate-600 border-slate-100 ring-2 ring-slate-900/5">
+                          {cat._count.products} <span className="opacity-60 ml-1">ITENS</span>
                         </span>
                       </td>
-                      <td className="px-6 py-5 text-right">
-                         <DeleteCategoryButton id={cat.id} productCount={cat._count.products} />
+                      <td className="px-8 py-5">
+                         <div className="opacity-0 group-hover:opacity-100 transition-all duration-300">
+                           <DeleteCategoryButton id={cat.id} productCount={cat._count.products} />
+                         </div>
                       </td>
                     </tr>
                   ))}
                   {categories.length === 0 && (
                     <tr>
-                      <td colSpan={3} className="px-6 py-12 text-center">
-                        <p className="text-zinc-500 font-medium">Não há divisões</p>
-                        <p className="text-xs text-zinc-600">O sistema precisa de categorias para organizar os produtos.</p>
+                      <td colSpan={3} className="px-8 py-32 text-center">
+                        <div className="flex flex-col items-center gap-5 text-slate-700 opacity-40">
+                          <FolderSearch className="h-20 w-20 stroke-[1]" />
+                          <div className="space-y-2">
+                            <p className="font-black uppercase tracking-[0.3em] text-sm">Sem divisões</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest">Inicie o catálogo cadastrando uma categoria.</p>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -105,6 +122,8 @@ export default async function AdminCategoriesPage() {
               </table>
             </div>
           </div>
+          
+          <Pagination totalPages={totalPages} currentPage={currentPage} />
         </div>
       </div>
     </div>

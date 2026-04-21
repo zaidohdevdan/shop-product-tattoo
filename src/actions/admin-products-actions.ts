@@ -22,24 +22,35 @@ export async function saveProductAction(formData: FormData) {
     const name = formData.get("name") as string;
     const sku = formData.get("sku") as string;
     const priceRaw = formData.get("price") as string;
+    const costPriceRaw = formData.get("costPrice") as string;
     const stockRaw = formData.get("stock") as string;
     const description = formData.get("description") as string;
     const categoryId = formData.get("categoryId") as string;
     
     // Validação de presença
-    if (!name || !sku || !priceRaw || !categoryId) {
+    if (!name || !sku || !priceRaw || !costPriceRaw || !categoryId) {
       return { error: "Campos obrigatórios ausentes." };
     }
 
     const price = parseFloat(priceRaw);
+    const costPrice = parseFloat(costPriceRaw);
     const stock = parseInt(stockRaw, 10);
 
     if (isNaN(price)) return { error: "Preço inválido." };
+    if (isNaN(costPrice)) return { error: "Preço de custo inválido." };
     if (isNaN(stock)) return { error: "Estoque inválido." };
     
     const imagesStrList = formData.getAll("images") as string[];
-    // Limpa strings vazias que podem ter vindo por engano (embora getAll retorne apenas o que tem value)
-    const images = imagesStrList.filter(Boolean);
+    
+    // Função para validar URLs completas e seguras
+    const isValidUrl = (url: string) => {
+      if (!url) return false;
+      if (!url.includes('cloudinary.com')) return true;
+      const brokenPatterns = ['/c_pad', '/c_fill', '/e_background_removal'];
+      return !brokenPatterns.some(pattern => url.endsWith(pattern)) && url.split('/').length > 6;
+    };
+
+    const images = imagesStrList.filter(isValidUrl);
 
     // Geração automatizada de slug amigável com sufixo único para evitar colisões
     let slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
@@ -53,11 +64,11 @@ export async function saveProductAction(formData: FormData) {
     if (id) {
       await prisma.product.update({
         where: { id },
-        data: { name, sku, price, stock, description, categoryId, images },
+        data: { name, sku, price, costPrice, stock, description, categoryId, images },
       });
     } else {
       await prisma.product.create({
-        data: { name, slug, sku, price, stock, description, categoryId, images, active: true },
+        data: { name, slug, sku, price, costPrice, stock, description, categoryId, images, active: true },
       });
     }
 

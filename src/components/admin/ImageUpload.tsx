@@ -45,14 +45,14 @@ export const ImageUpload = ({
     <div className="w-full">
       <div className="mb-6 flex flex-wrap items-center gap-4">
         {value.map((url) => (
-          <div key={url} className="relative w-[140px] h-[140px] md:w-[160px] md:h-[160px] rounded-2xl overflow-hidden border border-white/10 group shadow-xl bg-black/40">
+          <div key={url} className="relative w-[140px] h-[140px] md:w-[160px] md:h-[160px] rounded-2xl overflow-hidden border border-slate-200 group shadow-sm bg-white">
             <div className="absolute top-2 right-2 z-20 transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0">
               <Button 
                 type="button" 
                 onClick={() => onRemove(url)} 
                 variant="destructive" 
                 size="icon"
-                className="h-8 w-8 rounded-lg shadow-lg"
+                className="h-8 w-8 rounded-lg shadow-lg bg-rose-500 hover:bg-rose-600"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -64,7 +64,7 @@ export const ImageUpload = ({
               src={url}
               sizes="(max-width: 768px) 140px, 160px"
             />
-            <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-t from-slate-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
           </div>
         ))}
       </div>
@@ -96,19 +96,19 @@ export const ImageUpload = ({
             },
             styles: {
                 palette: {
-                    window: '#020617',
-                    windowBorder: '#1e293b',
-                    tabIcon: '#6366f1',
-                    menuIcons: '#94a3b8',
-                    textDark: '#ffffff',
+                    window: '#ffffff',
+                    windowBorder: '#e2e8f0',
+                    tabIcon: '#4f46e5',
+                    menuIcons: '#64748b',
+                    textDark: '#0f172a',
                     textLight: '#ffffff',
-                    link: '#6366f1',
+                    link: '#4f46e5',
                     action: '#4f46e5',
-                    inactiveTabIcon: '#475569',
+                    inactiveTabIcon: '#94a3b8',
                     error: '#ef4444',
-                    inProgress: '#6366f1',
-                    complete: '#22c55e',
-                    sourceBg: '#0f172a'
+                    inProgress: '#4f46e5',
+                    complete: '#10b981',
+                    sourceBg: '#f8fafc'
                 }
             }
         }}
@@ -124,14 +124,14 @@ export const ImageUpload = ({
               disabled={value.length >= 5}
               variant="outline"
               onClick={onClick}
-              className="w-full h-40 border-dashed border-2 border-white/10 bg-black/20 hover:bg-black/40 hover:border-indigo-500/50 flex flex-col items-center justify-center gap-3 group transition-all rounded-3xl"
+              className="w-full h-40 border-dashed border-2 border-slate-200 bg-slate-50/50 hover:bg-slate-50 hover:border-indigo-500/50 flex flex-col items-center justify-center gap-3 group transition-all rounded-3xl"
             >
-              <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center group-hover:bg-indigo-500/10 group-hover:text-indigo-400 transition-all group-hover:scale-110">
+              <div className="h-12 w-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-all group-hover:scale-110 shadow-xs">
                 <ImagePlus className="h-6 w-6" />
               </div>
               <div className="flex flex-col items-center gap-1">
-                <span className="text-slate-200 font-semibold">Adicionar Fotos do Produto</span>
-                <span className="text-xs text-slate-500 font-medium">Recomendado: 1080x1080px • Máx. 5 fotos</span>
+                <span className="text-slate-900 font-black uppercase text-[10px] tracking-widest leading-none">Adicionar Fotos</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">Recomendado: 1080x1080px • Máx. 5 fotos</span>
               </div>
             </Button>
           );

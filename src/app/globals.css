@@ -1,37 +1,93 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f1f5f9;
+  --foreground: #0f172a;
+  --sidebar-bg: #0f172a;
+  --card-bg: #ffffff;
+  --accent: #0284c7;
+  --border-executive: #e2e8f0;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-bebas);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-jakarta);
+  --font-display: var(--font-jakarta); /* Usado Plus Jakarta Sans para máxima legibilidade e tom premium */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display), system-ui, sans-serif;
-  letter-spacing: 0.02em;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  font-weight: 800;
 }
 
-/* Admin Styles */
-.admin-select-option {
-  background-color: #0f172a;
-  color: white;
+/* Stellar Executive Utilities */
+.premium-card {
+  @apply bg-white border border-slate-200 rounded-xl shadow-sm transition-all duration-200;
 }
+
+.premium-card:hover {
+  @apply border-slate-300 shadow-md;
+}
+
+.executive-badge {
+  @apply inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border;
+}
+
+/* Optimized Animations */
+@keyframes critical-pulse {
+  0%, 100% { background-color: rgba(239, 68, 68, 0); }
+  50% { background-color: rgba(239, 68, 68, 0.05); }
+}
+
+.animate-critical-blink {
+  animation: critical-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Scrollbar Style */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full hover:bg-slate-400;
+}
+
+/* Custom Inventory Bars */
+.inventory-bar-fill {
+  height: 100%;
+  transition: all 1000ms cubic-bezier(0.4, 0, 0.2, 1);
+  width: var(--bar-width, 0%);
+}
+
+.inventory-bar-revenue {
+  @apply bg-indigo-600;
+  box-shadow: 0 0 12px rgba(79, 70, 229, 0.3);
+}
+
+.inventory-bar-cost {
+  @apply bg-slate-300;
+}
+
+.valuation-card-glow {
+  @apply absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl pointer-events-none transition-colors duration-1000;
+}
+
+.valuation-card-glow:hover {
+  @apply bg-indigo-100/50;
+}
+
+.product-form-glow {
+  @apply blur-[80px];
+}
+

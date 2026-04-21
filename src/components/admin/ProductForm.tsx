@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/select";
 import { ImageUpload } from "./ImageUpload";
 
-export type ClientSafeProduct = Omit<Product, "price"> & {
+export type ClientSafeProduct = Omit<Product, "price" | "costPrice"> & {
   price: number;
+  costPrice: number;
 };
 
 interface ProductFormProps {
@@ -60,20 +61,20 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
       }
 
       toast.success(initialData ? "Produto revisado e salvo com sucesso!" : "Novo produto catalogado e publicado!");
-      router.refresh();
       router.push("/admin/products");
     });
   };
 
   return (
-    <form action={handleSubmit} className="flex flex-col gap-8 bg-[#020617] p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-32 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
+    <form action={handleSubmit} className="flex flex-col gap-10 premium-card p-12 relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 p-32 bg-indigo-50 blur-[80px] rounded-full pointer-events-none opacity-50 product-form-glow" />
       
       {initialData && <input type="hidden" name="id" value={initialData.id} />}
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="product-name" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Nome do Produto</label>
+        <div className="flex flex-col gap-2.5">
+          <label htmlFor="product-name" className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nome do Produto</label>
           <input 
             id="product-name"
             type="text" 
@@ -81,13 +82,13 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
             defaultValue={initialData?.name} 
             required 
             placeholder="Ex: Máquina Pen Premium"
-            className="h-12 bg-black/40 border border-white/10 rounded-xl px-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all focus:bg-black/60 shadow-sm" 
+            className="h-14 bg-slate-50/50 border border-slate-200 rounded-2xl px-6 text-zinc-900 font-bold placeholder:text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-xs" 
           />
         </div>
         
-        <div className="flex flex-col gap-2">
-          <label htmlFor="product-sku" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Código SKU (Auto)</label>
-          <div className="relative flex gap-2">
+        <div className="flex flex-col gap-2.5">
+          <label htmlFor="product-sku" className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Código SKU (Auto)</label>
+          <div className="relative flex gap-3">
             <input 
               id="product-sku"
               type="text" 
@@ -96,31 +97,31 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
               onChange={(e) => setSku(e.target.value)}
               required 
               placeholder="ST-0000-0000"
-              className="h-12 flex-1 bg-black/40 border border-white/10 rounded-xl px-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all focus:bg-black/60 shadow-sm" 
+              className="h-14 flex-1 bg-slate-50/50 border border-slate-200 rounded-2xl px-6 text-zinc-900 font-black tracking-widest placeholder:text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-xs" 
             />
             <button
               type="button"
               onClick={handleGenerateSKU}
-              className="h-12 w-12 flex items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="h-14 w-14 flex items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-400 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all active:scale-95 shadow-xs"
               title="Gerar novo SKU"
             >
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className="h-5 w-5" />
             </button>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="product-category" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Categoria</label>
+        <div className="flex flex-col gap-2.5">
+          <label htmlFor="product-category" className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Categoria de Destino</label>
           <input type="hidden" name="categoryId" value={categoryId} />
           <Select value={categoryId} onValueChange={setCategoryId}>
-            <SelectTrigger className="h-12 w-full bg-black/40 border-white/10 rounded-xl">
-              <SelectValue placeholder="Selecione uma categoria" />
+            <SelectTrigger className="h-14 w-full bg-slate-50/50 border-slate-200 rounded-2xl px-6 text-zinc-900 font-bold focus:ring-4 focus:ring-indigo-500/5">
+              <SelectValue placeholder="Selecione..." />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-slate-200">
               {categories.map((cat) => (
-                <SelectItem key={cat.id} value={cat.id}>
+                <SelectItem key={cat.id} value={cat.id} className="font-bold text-slate-600 hover:text-zinc-900">
                   {cat.name}
                 </SelectItem>
               ))}
@@ -128,8 +129,22 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
           </Select>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="product-price" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Preço (R$)</label>
+        <div className="flex flex-col gap-2.5">
+          <label htmlFor="product-cost-price" className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Valor de Custo (R$)</label>
+          <input 
+            id="product-cost-price"
+            type="number" 
+            step="0.01" 
+            name="costPrice" 
+            defaultValue={initialData?.costPrice ? Number(initialData.costPrice) : ""} 
+            required 
+            placeholder="0,00"
+            className="h-14 bg-slate-50/50 border border-slate-200 rounded-2xl px-6 text-zinc-900 font-bold placeholder:text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-xs" 
+          />
+        </div>
+
+        <div className="flex flex-col gap-2.5">
+          <label htmlFor="product-price" className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Valor Final (R$)</label>
           <input 
             id="product-price"
             type="number" 
@@ -138,12 +153,12 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
             defaultValue={initialData?.price ? Number(initialData.price) : ""} 
             required 
             placeholder="0,00"
-            className="h-12 bg-black/40 border border-white/10 rounded-xl px-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all focus:bg-black/60 shadow-sm" 
+            className="h-14 bg-slate-50/50 border border-slate-200 rounded-2xl px-6 text-zinc-900 font-bold placeholder:text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-xs" 
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="product-stock" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Estoque Físico</label>
+        <div className="flex flex-col gap-2.5">
+          <label htmlFor="product-stock" className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Quantidade em Estoque</label>
           <input 
             id="product-stock"
             type="number" 
@@ -152,7 +167,7 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
             required 
             min="0"
             placeholder="0"
-            className="h-12 bg-black/40 border border-white/10 rounded-xl px-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all focus:bg-black/60 shadow-sm" 
+            className="h-14 bg-slate-50/50 border border-slate-200 rounded-2xl px-6 text-zinc-900 font-black placeholder:text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-xs" 
           />
         </div>
       </div>
@@ -174,38 +189,38 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
         />
       </div>
 
-      <div className="flex flex-col gap-2 relative z-10">
-        <label htmlFor="product-description" className="text-sm font-bold text-slate-400 uppercase tracking-tight">Descrição Detalhada</label>
+      <div className="flex flex-col gap-2.5 relative z-10">
+        <label htmlFor="product-description" className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Descrição Técnica</label>
         <textarea 
           id="product-description"
           name="description" 
           defaultValue={initialData?.description} 
           required 
           rows={5}
-          placeholder="Descreva as especificações técnicas e diferenciais do produto..."
-          className="bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-y transition-all focus:bg-black/60 shadow-sm" 
+          placeholder="Ex: Produto de alta qualidade com acabamento anodizado..."
+          className="bg-slate-50/50 border border-slate-200 rounded-2xl p-6 text-zinc-900 font-bold placeholder:text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 resize-y transition-all shadow-xs" 
         />
       </div>
 
-      <div className="flex flex-col-reverse md:flex-row items-center justify-end gap-4 pt-8 border-t border-white/5 mt-4 relative z-10 w-full">
+      <div className="flex flex-col-reverse md:flex-row items-center justify-end gap-6 pt-10 border-t border-slate-100 mt-6 relative z-10 w-full">
         <button 
           type="button" 
           onClick={() => router.back()}
-          className="w-full md:w-auto px-6 py-3 text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-slate-500"
+          className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-rose-500 transition-colors"
         >
           Descartar Alterações
         </button>
         <Button 
           type="submit" 
-          variant="premium"
+          variant="default"
           size="lg"
           disabled={isPending}
-          className="w-full md:w-auto min-w-[200px]"
+          className="w-full md:w-auto h-16 rounded-2xl bg-zinc-900 hover:bg-indigo-600 text-white font-black uppercase tracking-[0.2em] px-10 transition-all shadow-xl shadow-zinc-900/10 active:scale-95"
         >
-          {isPending ? <Loader2 className="h-5 w-5 animate-spin mx-4" /> : (
-            <span className="flex items-center gap-2">
+          {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+            <span className="flex items-center gap-3">
               <Save className="h-5 w-5" />
-              {initialData ? "Atualizar Produto" : "Publicar no Catálogo"}
+              {initialData ? "Sincronizar Dados" : "Publicar Agora"}
             </span>
           )}
         </Button>

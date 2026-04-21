@@ -43,8 +43,8 @@ export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
         className={cn(
           "h-9 w-9 p-0 rounded-xl",
           active 
-            ? "text-zinc-500 hover:text-red-400 hover:bg-red-500/10" 
-            : "text-zinc-500 hover:text-emerald-400 hover:bg-emerald-500/10"
+            ? "text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100" 
+            : "text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-100"
         )}
         aria-label={active ? "Ocultar Produto" : "Restaurar Anúncio"}
       >
