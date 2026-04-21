@@ -31,7 +31,7 @@ export function FloatingWhatsApp() {
     }, 2000);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [isAdmin]);
 
   const waNumber = "5585981025033";
   const message = encodeURIComponent("Olá! Estou no site e gostaria de tirar algumas dúvidas.");

@@ -16,17 +16,27 @@ export interface AbandonedCartPlain {
 }
 
 /**
- * Busca carrinhos abandonados (pedidos pendentes com telefone) com cache do Next.js 16.
+ * Busca carrinhos abandonados com suporte a filtro de arquivamento e busca.
  */
-export async function getAbandonedCarts(): Promise<AbandonedCartPlain[]> {
+export async function getAbandonedCarts(archived = false, search?: string): Promise<AbandonedCartPlain[]> {
   "use cache";
   cacheTag("orders");
 
+  const where: any = {
+    status: OrderStatus.PENDING,
+    customerPhone: { not: null },
+    isArchived: archived
+  };
+
+  if (search) {
+    where.OR = [
+      { customerName: { contains: search, mode: 'insensitive' } },
+      { customerPhone: { contains: search, mode: 'insensitive' } }
+    ];
+  }
+
   const carts = await prisma.order.findMany({
-    where: {
-      status: OrderStatus.PENDING,
-      customerPhone: { not: null },
-    },
+    where,
     include: {
       items: {
         include: {
@@ -54,6 +64,56 @@ export async function getAbandonedCarts(): Promise<AbandonedCartPlain[]> {
   }));
 }
 
+/**
+ * Gestão de leads de recuperação
+ */
+export async function archiveRecoveryOrder(id: string) {
+  return prisma.order.update({
+    where: { id },
+    data: { isArchived: true }
+  });
+}
+
+export async function unarchiveRecoveryOrder(id: string) {
+  return prisma.order.update({
+    where: { id },
+    data: { isArchived: false }
+  });
+}
+
+export async function deleteRecoveryOrder(id: string) {
+  // O Prisma deleta em cascata os itens se configurado, 
+  // mas aqui deletamos manualmente ou confiamos no schema (Order -> Items)
+  return prisma.order.delete({
+    where: { id }
+  });
+}
+
+/**
+ * Estatísticas globais de abandono (inclui arquivados)
+ */
+export async function getRecoveryStats() {
+  const [active, archived, totalPotential] = await Promise.all([
+    prisma.order.count({ where: { status: OrderStatus.PENDING, isArchived: false, customerPhone: { not: null } } }),
+    prisma.order.count({ where: { status: OrderStatus.PENDING, isArchived: true, customerPhone: { not: null } } }),
+    prisma.order.aggregate({
+      where: { status: OrderStatus.PENDING, customerPhone: { not: null } },
+      _sum: { totalPrice: true }
+    })
+  ]);
+
+  return {
+    activeCount: active,
+    archivedCount: archived,
+    totalCount: active + archived,
+    potentialRevenue: Number(totalPotential._sum.totalPrice || 0)
+  };
+}
+
 export const recoveryService = {
-  getAbandonedCarts
+  getAbandonedCarts,
+  archiveRecoveryOrder,
+  unarchiveRecoveryOrder,
+  deleteRecoveryOrder,
+  getRecoveryStats
 };

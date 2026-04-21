@@ -60,8 +60,11 @@ model Order {
   coupon         Coupon?     @relation(fields: [couponId], references: [id])
   items          OrderItem[]
 
+  isArchived    Boolean     @default(false)
+
   @@index([status, createdAt])
   @@index([createdAt])
+  @@index([isArchived])
 }
 
 model OrderItem {
@@ -91,6 +94,18 @@ model Coupon {
   orders        Order[]
 }
 
+
+model Subscription {
+  id        String             @id @default(cuid())
+  email     String             @unique
+  status    SubscriptionStatus @default(ACTIVE)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([email])
+  @@index([status])
+}
+
 enum OrderStatus {
   PENDING
   CONFIRMED
@@ -100,4 +115,10 @@ enum OrderStatus {
 enum CouponType {
   PERCENTAGE
   FIXED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  ARCHIVED
+  UNSUBSCRIBED
 }

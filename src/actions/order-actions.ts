@@ -1,11 +1,11 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { revalidatePath, updateTag, refresh } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { OrderStatus } from "@prisma/client";
 
 export async function createOrderAction(
-  customerName: string, 
+  customerName: string,
   items: { id: string, quantity: number, price: number }[],
   couponCode?: string
 ) {
@@ -18,8 +18,8 @@ export async function createOrderAction(
       });
 
       if (!product || product.stock < item.quantity) {
-        return { 
-          error: `Estoque insuficiente para o produto: ${product?.name || "Desconhecido"}. Disponível: ${product?.stock || 0}` 
+        return {
+          error: `Estoque insuficiente para o produto: ${product?.name || "Desconhecido"}. Disponível: ${product?.stock || 0}`
         };
       }
     }
@@ -38,13 +38,13 @@ export async function createOrderAction(
 
       if (coupon && coupon.active && (!coupon.expiresAt || new Date() <= coupon.expiresAt) && (!coupon.maxUses || coupon.usedCount < coupon.maxUses)) {
         couponId = coupon.id;
-        
+
         if (coupon.discountType === "PERCENTAGE") {
           discountAmount = subtotal * (Number(coupon.discountValue) / 100);
         } else {
           discountAmount = Number(coupon.discountValue);
         }
-        
+
         total = Math.max(0, subtotal - discountAmount);
       }
     }
@@ -122,7 +122,7 @@ export async function confirmOrderAction(token: string, confirmed: boolean) {
           where: { id: order.id },
           data: { status: OrderStatus.CONFIRMED }
         }),
-        ...order.items.map(item => 
+        ...order.items.map(item =>
           prisma.product.update({
             where: { id: item.productId },
             data: { stock: { decrement: item.quantity } }
@@ -131,13 +131,12 @@ export async function confirmOrderAction(token: string, confirmed: boolean) {
       ]);
 
       // ✅ [PERF] Estoque mudou — invalida cache de inventário e atualiza o cliente imediatamente
-      updateTag("inventory");
-      refresh();
+      revalidateTag("inventory", "max");
       revalidatePath("/admin/products");
       revalidatePath("/admin");
       revalidatePath("/admin/inventory");
       revalidatePath("/");
-      
+
       return { success: true, message: "Venda confirmada e estoque atualizado!" };
     } else {
       // Registrar que não foi vendido (apenas cancela o pedido)

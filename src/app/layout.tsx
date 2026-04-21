@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 
 const bebasNeue = Bebas_Neue({
@@ -103,10 +104,14 @@ export default function RootLayout({
       className={`${bebasNeue.variable} ${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-black">
-        <PromoBanner />
+        <Suspense fallback={null}>
+          <PromoBanner />
+        </Suspense>
         {children}
         <CartDrawer />
-        <FloatingWhatsApp />
+        <Suspense fallback={null}>
+          <FloatingWhatsApp />
+        </Suspense>
         <Toaster theme="dark" richColors position="top-right" />
         <DevCacheReset />
       </body>

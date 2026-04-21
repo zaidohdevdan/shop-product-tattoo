@@ -164,8 +164,19 @@ export function ProductTableClient({ products }: ProductTableClientProps) {
                     </td>
                     <td className="px-6 py-6 text-right">
                       {(() => {
-                        const profit = product.price - product.costPrice;
+                        const cost = Number(product.costPrice);
+                        const profit = product.price - cost;
                         const margin = product.price > 0 ? (profit / product.price) * 100 : 0;
+                        
+                        if (cost === 0 && product.price > 0) {
+                          return (
+                            <div className="flex flex-col items-end gap-1">
+                              <span className="text-[10px] font-black text-amber-600 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-md uppercase tracking-tight">Custo Ausente</span>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Dados de BI Incompletos</span>
+                            </div>
+                          );
+                        }
+
                         return (
                           <span className={cn(
                             "text-[11px] font-black px-2.5 py-1 rounded-lg border",

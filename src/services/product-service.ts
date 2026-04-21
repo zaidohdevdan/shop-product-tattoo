@@ -271,9 +271,14 @@ export const productService = {
 
     let totalCost = 0;
     let potentialRevenue = 0;
+    let missingCostCount = 0;
 
     products.forEach((p) => {
-      totalCost += p.stock * Number(p.costPrice);
+      const cost = Number(p.costPrice);
+      if (p.stock > 0 && cost === 0) {
+        missingCostCount++;
+      }
+      totalCost += p.stock * cost;
       potentialRevenue += p.stock * Number(p.price);
     });
 
@@ -285,8 +290,9 @@ export const productService = {
       potentialRevenue,
       totalMargin,
       marginPercentage,
+      missingCostCount,
     };
-  },
+},
 
   /**
    * [PERF] Retorna apenas a contagem total de produtos ativos.

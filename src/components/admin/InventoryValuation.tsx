@@ -8,6 +8,7 @@ interface ValuationData {
   potentialRevenue: number;
   totalMargin: number;
   marginPercentage: number;
+  missingCostCount: number;
 }
 
 interface InventoryValuationProps {
@@ -15,18 +16,18 @@ interface InventoryValuationProps {
 }
 
 export function InventoryValuation({ data }: InventoryValuationProps) {
-  const { totalCost, potentialRevenue, totalMargin, marginPercentage } = data;
+  const { totalCost, potentialRevenue, totalMargin, marginPercentage, missingCostCount } = data;
   const costBarRef = useRef<HTMLDivElement>(null);
   const revenueBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const maxValue = Math.max(totalCost, potentialRevenue);
     if (costBarRef.current) {
-      const costWidth = (totalCost / maxValue) * 100;
+      const costWidth = maxValue > 0 ? (totalCost / maxValue) * 100 : 0;
       costBarRef.current.style.setProperty("--bar-width", `${costWidth}%`);
     }
     if (revenueBarRef.current) {
-      const revenueWidth = (potentialRevenue / maxValue) * 100;
+      const revenueWidth = maxValue > 0 ? (potentialRevenue / maxValue) * 100 : 0;
       revenueBarRef.current.style.setProperty("--bar-width", `${revenueWidth}%`);
     }
   }, [totalCost, potentialRevenue]);
@@ -38,14 +39,24 @@ export function InventoryValuation({ data }: InventoryValuationProps) {
       
       <div className="flex flex-col items-stretch justify-between gap-10 relative z-10 flex-1">
         <div className="space-y-6 flex-1">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
-              <BarChart3 className="h-5 w-5 text-white" />
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+                <BarChart3 className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">Valoração de Estoque</h2>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Visão de ROI e Ativos</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">Valoração de Estoque</h2>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Visão de ROI e Ativos</p>
-            </div>
+            {missingCostCount > 0 && (
+              <div className="flex items-center gap-2 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-xl animate-in fade-in zoom-in duration-500">
+                <Info className="h-3.5 w-3.5 text-amber-600" />
+                <span className="text-[9px] font-black text-amber-700 uppercase tracking-tight">
+                  {missingCostCount} PRODUTOS SEM CUSTO
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
