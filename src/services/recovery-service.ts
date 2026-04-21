@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { OrderStatus } from "@prisma/client";
+import { OrderStatus, Prisma } from "@prisma/client";
 import { cacheTag } from "next/cache";
 
 export interface AbandonedCartPlain {
@@ -22,7 +22,7 @@ export async function getAbandonedCarts(archived = false, search?: string): Prom
   "use cache";
   cacheTag("orders");
 
-  const where: any = {
+  const where: Prisma.OrderWhereInput = {
     status: OrderStatus.PENDING,
     customerPhone: { not: null },
     isArchived: archived

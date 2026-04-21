@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { CouponsClientPage } from "./CouponsClientPage";
+import { Suspense } from "react";
 
-export default async function AdminCouponsPage() {
+async function CouponsDashboardContent() {
   const coupons = await prisma.coupon.findMany({
     orderBy: { createdAt: "desc" },
   });
@@ -11,6 +12,26 @@ export default async function AdminCouponsPage() {
     discountValue: Number(c.discountValue),
   }));
 
+  return <CouponsClientPage initialCoupons={formattedCoupons} />;
+}
+
+function CouponsSkeleton() {
+  return (
+    <div className="space-y-10 animate-pulse">
+      <div className="flex gap-4">
+        <div className="flex-1 h-12 bg-white rounded-2xl border border-slate-100" />
+        <div className="h-12 w-32 bg-white rounded-2xl border border-slate-100" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="h-64 bg-white rounded-[2rem] border border-slate-100 shadow-sm" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default async function AdminCouponsPage() {
   return (
     <div className="p-6 md:p-10 max-w-[1600px] mx-auto space-y-10 selection:bg-indigo-500/30">
       <header className="flex flex-col sm:flex-row items-end sm:items-center justify-between gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
@@ -24,7 +45,9 @@ export default async function AdminCouponsPage() {
       </header>
 
       <div className="animate-in fade-in zoom-in-95 duration-700">
-        <CouponsClientPage initialCoupons={formattedCoupons} />
+        <Suspense fallback={<CouponsSkeleton />}>
+          <CouponsDashboardContent />
+        </Suspense>
       </div>
     </div>
   );
