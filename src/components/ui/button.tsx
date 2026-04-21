@@ -24,6 +24,8 @@ const buttonVariants = cva(
           "bg-linear-to-br from-indigo-600 to-violet-700 text-white shadow-[0_0_20px_-5px_rgba(79,70,229,0.5)] hover:shadow-[0_0_25px_-5px_rgba(79,70,229,0.6)] hover:brightness-110",
         whatsapp:
           "bg-[#25D366] text-white shadow-[0_0_15px_-3px_rgba(37,211,102,0.4)] hover:bg-[#22c35e] hover:shadow-[0_0_20px_-3px_rgba(37,211,102,0.5)]",
+        admin:
+          "bg-indigo-600 text-white font-black uppercase tracking-widest text-[11px] shadow-lg shadow-indigo-100 hover:bg-indigo-500",
       },
       size: {
         default: "h-11 px-6 py-2",

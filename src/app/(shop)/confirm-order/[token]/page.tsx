@@ -1,39 +1,52 @@
-import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { OrderConfirmationForm } from "./OrderConfirmationForm";
 import { Header } from "@/components/shared/Header";
 import { ShoppingBag } from "lucide-react";
+import { orderService } from "@/services/order-service";
+import { Suspense } from "react";
+import { OrderStatus } from "@prisma/client";
 
 interface PageProps {
   params: Promise<{ token: string }>;
 }
 
-export default async function ConfirmOrderPage({ params }: PageProps) {
+async function OrderDetails({ params }: { params: Promise<{ token: string }> }) {
+  // No Next.js 16, aguardar params dentro do componente suspenso
+  // garante que a 'casca' da página (Header/Layout) renderize instantaneamente.
   const { token } = await params;
-
-  // Buscar o pedido pelo token
-  const order = await prisma.order.findUnique({
-    where: { sellerToken: token },
-    include: {
-      items: {
-        include: {
-          product: {
-            select: { name: true }
-          }
-        }
-      }
-    }
-  });
+  const order = await orderService.getOrderByToken(token);
 
   if (!order) {
     notFound();
   }
 
-  const formattedItems = order.items.map(item => ({
-    name: item.product.name,
-    quantity: item.quantity,
-    price: Number(item.price)
-  }));
+  return (
+    <OrderConfirmationForm 
+      token={token}
+      customerName={order.customerName}
+      customerPhone={order.customerPhone}
+      totalPrice={order.totalPrice}
+      items={order.items}
+      status={order.status as OrderStatus}
+    />
+  );
+}
+
+function OrderDetailsSkeleton() {
+  return (
+    <div className="w-full space-y-8 animate-pulse">
+      <div className="h-64 bg-white/5 rounded-3xl border border-white/10" />
+      <div className="flex gap-4">
+        <div className="flex-1 h-16 bg-white/5 rounded-2xl border border-white/10" />
+        <div className="flex-1 h-16 bg-white/5 rounded-2xl border border-white/10" />
+      </div>
+    </div>
+  );
+}
+
+export default async function ConfirmOrderPage({ params }: PageProps) {
+  // Importante: NÃO dar await em params aqui fora se quiser evitar o aviso "Blocking Route"
+  // em rotas com Streaming habilitado por Suspense.
 
   return (
     <div className="min-h-screen bg-black flex flex-col items-center">
@@ -53,13 +66,9 @@ export default async function ConfirmOrderPage({ params }: PageProps) {
           </p>
         </div>
 
-        <OrderConfirmationForm 
-          token={token}
-          customerName={order.customerName}
-          totalPrice={Number(order.totalPrice)}
-          items={formattedItems}
-          status={order.status}
-        />
+        <Suspense fallback={<OrderDetailsSkeleton />}>
+          <OrderDetails params={params} />
+        </Suspense>
       </main>
 
       {/* Decorative background elements matching the shop aesthetic */}

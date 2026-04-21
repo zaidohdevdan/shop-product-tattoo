@@ -4,6 +4,7 @@ import { Tag, Plus, FolderSearch } from 'lucide-react';
 import { saveCategoryAction } from '@/actions/admin-categories-actions';
 import { DeleteCategoryButton } from '@/components/admin/DeleteCategoryButton';
 import { Pagination } from '@/components/admin/Pagination';
+import { Button } from '@/components/ui/button';
 
 interface PageProps {
   searchParams: Promise<{ page?: string }>;
@@ -19,7 +20,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
   const totalPages = Math.ceil(totalCategories / limit);
 
   return (
-    <div className="p-10 max-w-7xl mx-auto space-y-10 selection:bg-indigo-600 selection:text-white">
+    <div className="p-10 max-w-[1600px] mx-auto space-y-10 selection:bg-indigo-600 selection:text-white">
       <div className="flex flex-col md:flex-row items-end md:items-center justify-between gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
         <div>
           <div className="flex items-center gap-3 mb-2">
@@ -56,13 +57,15 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
                 />
               </label>
 
-              <button 
+              <Button 
                 type="submit" 
-                className="h-14 w-full rounded-xl bg-zinc-900 hover:bg-indigo-600 text-white font-black uppercase tracking-widest shadow-lg shadow-zinc-900/10 transition-all active:scale-95 flex items-center justify-center gap-3 text-[11px]"
+                variant="admin"
+                size="lg"
+                className="w-full gap-3"
               >
                 <Plus className="h-4 w-4" /> 
                 <span>Cadastrar Agora</span>
-              </button>
+              </Button>
             </div>
           </form>
         </div>

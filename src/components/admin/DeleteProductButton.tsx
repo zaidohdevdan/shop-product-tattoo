@@ -42,6 +42,7 @@ export function DeleteProductButton({ id, name }: DeleteProductButtonProps) {
         disabled={isPending}
         onClick={() => setIsOpen(true)}
         className="h-8 w-8 p-0 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all"
+        type="button"
         title="Excluir Permanentemente"
       >
         {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}

@@ -3,7 +3,7 @@ import { Shield, Server } from 'lucide-react';
 
 export default function AdminSettingsPage() {
   return (
-    <div className="p-4 sm:p-6 md:p-10 max-w-4xl mx-auto space-y-10 selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="p-4 sm:p-6 md:p-10 max-w-6xl mx-auto space-y-10 selection:bg-indigo-100 selection:text-indigo-900">
       <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-4 duration-700">
          <div className="flex items-center gap-3 mb-2">
             <div className="h-8 w-1.5 bg-indigo-600 rounded-full" />

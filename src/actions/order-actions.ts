@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag, refresh } from "next/cache";
 import { OrderStatus } from "@prisma/client";
 
 export async function createOrderAction(
@@ -130,6 +130,9 @@ export async function confirmOrderAction(token: string, confirmed: boolean) {
         )
       ]);
 
+      // ✅ [PERF] Estoque mudou — invalida cache de inventário e atualiza o cliente imediatamente
+      updateTag("inventory");
+      refresh();
       revalidatePath("/admin/products");
       revalidatePath("/admin");
       revalidatePath("/admin/inventory");

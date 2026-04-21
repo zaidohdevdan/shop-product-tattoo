@@ -2,18 +2,25 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 
 export async function toggleProductStatusAction(productId: string, currentStatus: boolean) {
-  await prisma.product.update({
-    where: { id: productId },
-    data: { active: !currentStatus },
-  });
-  
-  // Limpa o cache para todas as rotas relevantes para exibir a mudança instantaneamente
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/admin", "layout");
-  revalidatePath("/admin/products");
+  try {
+    await prisma.product.update({
+      where: { id: productId },
+      data: { active: !currentStatus },
+    });
+    
+    // ✅ [PERF] Invalida cache de inventário imediatamente
+    updateTag("inventory");
+    revalidatePath("/admin/products");
+    revalidatePath("/products");
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Erro crítico na Server Action toggleProductStatusAction:", error);
+    return { error: "Erro de conexão com o servidor. Tente atualizar a página." };
+  }
 }
 
 export async function saveProductAction(formData: FormData) {
@@ -72,6 +79,8 @@ export async function saveProductAction(formData: FormData) {
       });
     }
 
+    // ✅ [PERF] Invalida cache de inventário imediatamente
+    updateTag("inventory");
     revalidatePath("/");
     revalidatePath("/products");
     revalidatePath("/admin", "layout");
@@ -101,6 +110,8 @@ export async function deleteProductAction(id: string) {
       where: { id }
     });
 
+    // ✅ [PERF] Invalida cache de inventário imediatamente
+    updateTag("inventory");
     revalidatePath("/");
     revalidatePath("/products");
     revalidatePath("/admin", "layout");
@@ -113,3 +124,60 @@ export async function deleteProductAction(id: string) {
   }
 }
 
+/**
+ * [BULK] Altera o status (ativo/oculto) de múltiplos produtos de uma vez.
+ */
+export async function bulkToggleStatusAction(ids: string[], active: boolean) {
+  try {
+    await prisma.product.updateMany({
+      where: { id: { in: ids } },
+      data: { active },
+    });
+
+    updateTag("inventory");
+    revalidatePath("/admin/products");
+    revalidatePath("/products");
+
+    return { success: true, count: ids.length };
+  } catch (error) {
+    console.error("Erro ao atualizar status em massa:", error);
+    return { error: "Não foi possível atualizar os produtos. Tente novamente." };
+  }
+}
+
+/**
+ * [BULK] Exclui múltiplos produtos de uma vez.
+ * Protege contra exclusão de produtos com histórico de vendas.
+ */
+export async function bulkDeleteAction(ids: string[]) {
+  try {
+    // Check if any have order history
+    const withOrders = await prisma.orderItem.findMany({
+      where: { productId: { in: ids } },
+      select: { productId: true },
+      distinct: ["productId"],
+    });
+
+    const blockedIds = new Set(withOrders.map((o) => o.productId));
+    const deletableIds = ids.filter((id) => !blockedIds.has(id));
+
+    if (deletableIds.length > 0) {
+      await prisma.product.deleteMany({
+        where: { id: { in: deletableIds } },
+      });
+
+      updateTag("inventory");
+      revalidatePath("/admin/products");
+      revalidatePath("/");
+    }
+
+    return {
+      success: true,
+      deleted: deletableIds.length,
+      blocked: blockedIds.size,
+    };
+  } catch (error) {
+    console.error("Erro ao excluir produtos em massa:", error);
+    return { error: "Não foi possível excluir os produtos. Tente novamente." };
+  }
+}

@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 
 export async function saveCategoryAction(formData: FormData) {
   const name = formData.get("name") as string;
@@ -14,6 +14,8 @@ export async function saveCategoryAction(formData: FormData) {
     data: { name, slug }
   });
 
+  // ✅ [PERF] Invalida cache de inventário (queries de produtos incluem categoria)
+  updateTag("inventory");
   revalidatePath("/admin/categories");
   revalidatePath("/admin/products");
 }
@@ -31,5 +33,7 @@ export async function deleteCategoryAction(formData: FormData) {
     where: { id }
   });
 
+  // ✅ [PERF] Invalida cache de inventário
+  updateTag("inventory");
   revalidatePath("/admin/categories");
 }

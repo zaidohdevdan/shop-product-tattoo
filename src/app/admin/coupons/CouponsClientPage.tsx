@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Edit, Calendar, Hash, Check, X, Ticket } from "lucide-react";
+import { Plus, Trash2, Edit, Calendar, Hash, Check, X, Ticket, Search, SortAsc, Filter } from "lucide-react";
 import { CouponForm } from "@/components/admin/coupons/CouponForm";
+import { FilterSelect } from "@/components/admin/FilterSelect";
 import { deleteCouponAction } from "@/actions/coupon-actions";
 import { toast } from "sonner";
 import { CouponType } from "@prisma/client";
@@ -29,6 +30,23 @@ export function CouponsClientPage({ initialCoupons }: CouponsClientPageProps) {
   const [editingCoupon, setEditingCoupon] = useState<Coupon | undefined>(undefined);
   const [couponToDelete, setCouponToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Filters State
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+
+  const filteredCoupons = useMemo(() => {
+    return initialCoupons.filter((coupon) => {
+      const matchesSearch = coupon.code.toLowerCase().includes(search.toLowerCase());
+      const matchesStatus = statusFilter === "all" || 
+                           (statusFilter === "active" && coupon.active) || 
+                           (statusFilter === "inactive" && !coupon.active);
+      const matchesType = typeFilter === "all" || coupon.discountType === typeFilter;
+      
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }, [initialCoupons, search, statusFilter, typeFilter]);
 
   const handleDelete = async () => {
     if (!couponToDelete) return;
@@ -60,19 +78,61 @@ export function CouponsClientPage({ initialCoupons }: CouponsClientPageProps) {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-end">
-        <Button
-          onClick={handleAddNew}
-          className="rounded-2xl bg-indigo-500 hover:bg-indigo-600 text-white font-black uppercase tracking-widest gap-2 animate-in fade-in slide-in-from-right-4"
-        >
-          <Plus className="h-4 w-4" />
-          Novo Cupom
-        </Button>
+    <div className="space-y-10">
+      {/* Search and Filters Bar */}
+      <div className="flex flex-col xl:flex-row gap-4 xl:gap-8 items-stretch xl:items-center">
+        {/* Search */}
+        <div className="relative flex-1">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+            <Search className="h-4 w-4" />
+          </div>
+          <input 
+            type="text" 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por código..."
+            className="w-full h-12 pl-11 pr-4 bg-white border border-slate-200 rounded-2xl text-slate-900 font-bold placeholder:text-slate-400 placeholder:font-medium focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-sm"
+          />
+        </div>
+
+        {/* Dynamic Selects */}
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <FilterSelect 
+            value={statusFilter} 
+            onValueChange={setStatusFilter}
+            options={[
+              { value: "all", label: "Todos Status" },
+              { value: "active", label: "Apenas Ativos" },
+              { value: "inactive", label: "Apenas Inativos" },
+            ]}
+            placeholder="Status"
+            icon={<Filter className="h-3.5 w-3.5" />}
+          />
+          <FilterSelect 
+            value={typeFilter} 
+            onValueChange={setTypeFilter}
+            options={[
+              { value: "all", label: "Todos Tipos" },
+              { value: "PERCENTAGE", label: "Porcentagem %" },
+              { value: "FIXED", label: "Valor Fixo R$" },
+            ]}
+            placeholder="Tipo"
+            icon={<SortAsc className="h-3.5 w-3.5" />}
+          />
+          <Button
+            type="button"
+            title="Criar novo cupom de desconto"
+            onClick={handleAddNew}
+            className="h-12 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest gap-2 shadow-lg shadow-indigo-100 transition-all active:scale-95"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Novo</span>
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {initialCoupons.map((coupon) => (
+        {filteredCoupons.map((coupon) => (
           <div 
             key={coupon.id} 
             className="premium-card p-10 flex flex-col group animate-in fade-in slide-in-from-bottom-4 duration-700 shadow-sm relative border-2 border-transparent hover:border-indigo-600/20 hover:shadow-xl hover:shadow-indigo-500/5 transition-all"
@@ -129,6 +189,8 @@ export function CouponsClientPage({ initialCoupons }: CouponsClientPageProps) {
 
             <div className="flex gap-3">
               <Button
+                type="button"
+                title="Editar informações do cupom"
                 variant="outline"
                 size="sm"
                 onClick={() => handleEdit(coupon)}
@@ -137,6 +199,8 @@ export function CouponsClientPage({ initialCoupons }: CouponsClientPageProps) {
                 <Edit className="h-4 w-4" /> Editar
               </Button>
               <Button
+                type="button"
+                title="Excluir este cupom permanentemente"
                 variant="outline"
                 size="sm"
                 onClick={() => setCouponToDelete(coupon.id)}

@@ -15,6 +15,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { ImageUpload } from "./ImageUpload";
+import Link from "next/link";
 
 export type ClientSafeProduct = Omit<Product, "price" | "costPrice"> & {
   price: number;
@@ -66,7 +67,7 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
   };
 
   return (
-    <form action={handleSubmit} className="flex flex-col gap-10 premium-card p-12 relative overflow-hidden">
+    <form action={handleSubmit} className="flex flex-col gap-6 md:gap-10 premium-card p-6 md:p-12 relative overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-0 right-0 p-32 bg-indigo-50 blur-[80px] rounded-full pointer-events-none opacity-50 product-form-glow" />
       
@@ -203,24 +204,33 @@ export function ProductForm({ initialData = null, categories = [] }: ProductForm
       </div>
 
       <div className="flex flex-col-reverse md:flex-row items-center justify-end gap-6 pt-10 border-t border-slate-100 mt-6 relative z-10 w-full">
-        <button 
-          type="button" 
-          onClick={() => router.back()}
+        <Button
+          asChild
+          variant="ghost"
+          size="sm"
           className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-rose-500 transition-colors"
         >
-          Descartar Alterações
-        </button>
+          <Link href="/admin/products">
+            Descartar Alterações
+          </Link>
+        </Button>
         <Button 
           type="submit" 
-          variant="default"
+          variant="admin"
           size="lg"
           disabled={isPending}
-          className="w-full md:w-auto h-16 rounded-2xl bg-zinc-900 hover:bg-indigo-600 text-white font-black uppercase tracking-[0.2em] px-10 transition-all shadow-xl shadow-zinc-900/10 active:scale-95"
+          title={initialData ? "Salvar alterações do produto" : "Publicar novo produto na loja"}
+          className="w-full md:w-auto h-14 md:h-16 px-6 md:px-10 md:tracking-[0.2em]"
         >
           {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : (
-            <span className="flex items-center gap-3">
-              <Save className="h-5 w-5" />
-              {initialData ? "Sincronizar Dados" : "Publicar Agora"}
+            <span className="flex items-center gap-2 md:gap-3">
+              <Save className="h-5 w-5 shrink-0" />
+              <span className="hidden md:inline">
+                {initialData ? "Sincronizar Dados" : "Publicar Agora"}
+              </span>
+              <span className="md:hidden">
+                {initialData ? "Salvar" : "Publicar"}
+              </span>
             </span>
           )}
         </Button>

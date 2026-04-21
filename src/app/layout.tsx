@@ -32,7 +32,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: {
     template: "%s | ShopTattoo",
-    default: "ShopTattoo | Equipamentos de Elite & Tatuagem Premium",
+    default: "ShopTattoo | Produtos de Qualidade",
   },
   description: "O maior e mais bem equipado estúdio e supply de tatuagem de Fortaleza. Tradição, precisão estética e produtos aprovados por profissionais.",
   keywords: ["tatuagem fortaleza", "tattoo supply", "tinta de tatuagem", "equipamentos de tattoo", "estúdio premium", "shoptattoo", "material para tatuagem", "estúdio de tatuagem fortaleza"],
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://shoptattoo.com.br"),
   openGraph: {
     title: "ShopTattoo | O Mais Completo Hub de Tatuagem",
-    description: "Equipamentos profissionais para tatuadores e agendamento no estúdio mais sofisticado da região.",
+    description: "Produtos de qualidade para tatuadores e agendamento no estúdio mais sofisticado da região.",
     url: "https://shoptattoo.com.br",
     siteName: "ShopTattoo",
     images: [
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "ShopTattoo - Equipamentos e Estúdio",
+        alt: "ShopTattoo - Produtos de Qualidade",
       },
     ],
     locale: "pt_BR",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ShopTattoo | Equipamentos de Elite",
+    title: "ShopTattoo | Produtos de Qualidade",
     description: "Referência em tatuagem e suprimentos em Fortaleza.",
     images: ["/og-image.png"],
   },
@@ -88,6 +88,9 @@ export const metadata: Metadata = {
 
 import { CartDrawer } from "@/components/shared/CartDrawer";
 import { Toaster } from "sonner";
+import { PromoBanner } from "@/components/shared/PromoBanner";
+import { FloatingWhatsApp } from "@/components/shared/FloatingWhatsApp";
+import { DevCacheReset } from "@/components/shared/DevCacheReset";
 
 export default function RootLayout({
   children,
@@ -100,9 +103,12 @@ export default function RootLayout({
       className={`${bebasNeue.variable} ${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-black">
+        <PromoBanner />
         {children}
         <CartDrawer />
+        <FloatingWhatsApp />
         <Toaster theme="dark" richColors position="top-right" />
+        <DevCacheReset />
       </body>
     </html>
   );

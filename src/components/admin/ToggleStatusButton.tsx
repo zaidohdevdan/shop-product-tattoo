@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { toggleProductStatusAction } from "@/actions/admin-products-actions";
-import { Trash2, Loader2, RotateCcw } from "lucide-react";
+import { EyeOff, Loader2, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -22,11 +22,16 @@ export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
   const handleConfirm = () => {
     startTransition(async () => {
       try {
-        await toggleProductStatusAction(id, active);
-        router.refresh();
-        toast.success(active ? "Produto ocultado da vitrine!" : "Produto restaurado para a loja com sucesso!");
-      } catch {
-        toast.error("Ocorreu um erro ao alterar o status do produto.");
+        const result = await toggleProductStatusAction(id, active);
+        
+        if (result?.error) {
+          toast.error(result.error);
+        } else {
+          router.refresh();
+          toast.success(active ? "Produto ocultado da vitrine!" : "Produto restaurado para a loja com sucesso!");
+        }
+      } catch (error) {
+        toast.error("Ocorreu um erro ao alterar o status do produto: " + error);
       } finally {
         setIsOpen(false);
       }
@@ -47,11 +52,13 @@ export function ToggleStatusButton({ id, active }: ToggleButtonProps) {
             : "text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-100"
         )}
         aria-label={active ? "Ocultar Produto" : "Restaurar Anúncio"}
+        title={active ? "Ocultar Produto" : "Restaurar Anúncio"}
+        type="button"
       >
         {isPending ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : active ? (
-          <Trash2 className="h-4 w-4" />
+          <EyeOff className="h-4 w-4" />
         ) : (
           <RotateCcw className="h-4 w-4" />
         )}

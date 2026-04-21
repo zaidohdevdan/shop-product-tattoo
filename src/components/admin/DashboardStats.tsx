@@ -22,28 +22,37 @@ export function DashboardStats({ metrics }: DashboardStatsProps) {
       growth: calculateGrowth(current.revenue, previous.revenue),
       icon: <DollarSign className="h-5 w-5 text-emerald-400" />,
       bg: "bg-emerald-500/10",
-      border: "border-emerald-500/10",
+    },
+    {
+      label: "Lucro Bruto",
+      value: `R$ ${current.profit.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+      growth: calculateGrowth(current.profit, previous.profit),
+      icon: <TrendingUp className="h-5 w-5 text-indigo-400" />,
+      bg: "bg-indigo-500/10",
+      extra: (
+        <span className="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+          Margem: {current.profitMargin.toFixed(1)}%
+        </span>
+      )
     },
     {
       label: "Total de Pedidos",
       value: current.orders,
       growth: calculateGrowth(current.orders, previous.orders),
-      icon: <ShoppingBag className="h-5 w-5 text-indigo-400" />,
-      bg: "bg-indigo-500/10",
-      border: "border-indigo-500/10",
+      icon: <ShoppingBag className="h-5 w-5 text-violet-400" />,
+      bg: "bg-violet-500/10",
     },
     {
       label: "Ticket Médio",
       value: `R$ ${current.avgTicket.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
       growth: calculateGrowth(current.avgTicket, previous.avgTicket),
-      icon: <TrendingUp className="h-5 w-5 text-violet-400" />,
-      bg: "bg-violet-500/10",
-      border: "border-violet-500/10",
+      icon: <TrendingUp className="h-5 w-5 text-amber-400" />,
+      bg: "bg-amber-500/10",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
       {stats.map((stat, idx) => (
         <div 
           key={idx} 
@@ -75,8 +84,11 @@ export function DashboardStats({ metrics }: DashboardStatsProps) {
             )}
           </div>
 
-          <div className="space-y-1">
-            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</h3>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</h3>
+              {stat.extra}
+            </div>
             <p className="text-2xl font-black text-slate-900 tracking-tight">{stat.value}</p>
           </div>
         </div>

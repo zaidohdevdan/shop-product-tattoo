@@ -32,11 +32,11 @@ export function InventoryValuation({ data }: InventoryValuationProps) {
   }, [totalCost, potentialRevenue]);
 
   return (
-    <div className="premium-card p-10 relative overflow-hidden group">
+    <div className="premium-card p-10 relative overflow-hidden group h-full flex flex-col">
       {/* Background Decor */}
       <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl pointer-events-none group-hover:bg-indigo-100/50 transition-colors duration-1000" />
       
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10 relative z-10">
+      <div className="flex flex-col items-stretch justify-between gap-10 relative z-10 flex-1">
         <div className="space-y-6 flex-1">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
@@ -72,7 +72,7 @@ export function InventoryValuation({ data }: InventoryValuationProps) {
         </div>
 
         {/* Chart Section */}
-        <div className="w-full lg:w-[400px] bg-slate-50/50 p-8 rounded-[2rem] border border-slate-100 flex flex-col gap-8">
+        <div className="w-full bg-slate-50/50 p-8 rounded-[2rem] border border-slate-100 flex flex-col gap-8 mt-auto">
           <div className="space-y-4">
             <div className="flex justify-between items-end">
               <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Comparação de Fluxo</span>
@@ -111,9 +111,16 @@ export function InventoryValuation({ data }: InventoryValuationProps) {
                 <span className="text-2xl font-black text-slate-900 tracking-tighter whitespace-nowrap">
                   R$ {totalMargin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                 </span>
-                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100 whitespace-nowrap">
-                  +{marginPercentage.toFixed(1)}%
-                </span>
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100 whitespace-nowrap text-center">
+                    +{marginPercentage.toFixed(1)}% <span className="text-[8px] opacity-60">MARGEM</span>
+                  </span>
+                  {totalCost > 0 && (
+                    <span className="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-100 whitespace-nowrap text-center">
+                      {((totalMargin / totalCost) * 100).toFixed(0)}% <span className="text-[8px] opacity-60">MARKUP (ROI)</span>
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-300 hover:text-indigo-600 transition-colors cursor-help group/info" title="Cálculo baseado em Preço de Venda vs. Preço de Custo multiplicado pelo estoque total.">

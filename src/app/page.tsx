@@ -6,7 +6,7 @@ import { StudioGallery } from "@/components/landing/StudioGallery";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { ParallaxWrapper } from "@/components/landing/ParallaxWrapper";
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-black selection:bg-indigo-500/30">
       <Header />

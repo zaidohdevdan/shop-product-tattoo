@@ -14,6 +14,29 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-jakarta);
   --font-display: var(--font-jakarta); /* Usado Plus Jakarta Sans para máxima legibilidade e tom premium */
+
+  /* Animations & Keyframes */
+  --animate-marquee-slower: marquee-slower 30s linear infinite;
+  --animate-shine: shine 5s linear infinite;
+  --animate-premium-glow: premium-glow 4s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
+
+  @keyframes marquee-slower {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes shine {
+    0% { transform: translateX(-200%) skewX(-20deg); }
+    100% { transform: translateX(200%) skewX(-20deg); }
+  }
+  @keyframes premium-glow {
+    0%, 100% { opacity: 0.5; filter: blur(20px); }
+    50% { opacity: 0.8; filter: blur(25px); }
+  }
+  @keyframes pulse-soft {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+  }
 }
 
 body {

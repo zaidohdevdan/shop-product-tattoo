@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, X, Plus, Minus, Trash2, MessageCircle } from "lucide-react";
+import { ShoppingBag, X, Plus, Minus, Trash2, MessageCircle, Phone } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart-store";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { createOrderAction } from "@/actions/order-actions";
 import { validateCouponAction } from "@/actions/coupon-actions";
 import { toast } from "sonner";
 import { Ticket, Percent, Tag as TagIcon } from "lucide-react";
+import { syncCartAction } from "@/actions/cart-recovery-actions";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export function CartDrawer() {
   const items = useCartStore((state) => state.items);
@@ -22,6 +24,8 @@ export function CartDrawer() {
   const _hasHydrated = useCartStore((state) => state._hasHydrated);
   const customerName = useCartStore((state) => state.customerName);
   const setCustomerName = useCartStore((state) => state.setCustomerName);
+  const customerPhone = useCartStore((state) => state.customerPhone);
+  const setCustomerPhone = useCartStore((state) => state.setCustomerPhone);
   const clearCart = useCartStore((state) => state.clearCart);
   const appliedCoupon = useCartStore((state) => state.appliedCoupon);
   const applyCoupon = useCartStore((state) => state.applyCoupon);
@@ -48,6 +52,20 @@ export function CartDrawer() {
     };
   }, [isOpen, _hasHydrated]);
 
+  // Debounced Sync for Abandoned Cart Recovery
+  const debouncedName = useDebounce(customerName, 2000);
+  const debouncedPhone = useDebounce(customerPhone, 2000);
+  
+  useEffect(() => {
+    if (debouncedPhone.length >= 10 && items.length > 0) {
+      syncCartAction(
+        debouncedName || "Interesse Iniciado",
+        debouncedPhone,
+        items.map(i => ({ id: i.id, quantity: i.quantity, price: i.price }))
+      );
+    }
+  }, [debouncedName, debouncedPhone, items]);
+
   if (!_hasHydrated) return null;
 
   const handleApplyCoupon = async () => {
@@ -72,7 +90,19 @@ export function CartDrawer() {
   };
 
   const handleCheckout = async () => {
-    if (!customerName.trim() || isSubmitting) return;
+    if (isSubmitting) return;
+
+    if (!customerName.trim()) {
+      toast.error("Por favor, informe seu nome para continuar.");
+      document.getElementById("customer-name")?.focus();
+      return;
+    }
+
+    if (!customerPhone.trim() || customerPhone.length < 10) {
+      toast.error("Por favor, informe um WhatsApp válido.");
+      document.getElementById("customer-phone")?.focus();
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -122,27 +152,46 @@ export function CartDrawer() {
         })}*`;
       }
       
-      const sellerInfo = `\n\n--- 🔐 ÁREA DO VENDEDOR ---\nConfirme este pedido aqui: ${confirmationLink}`;
+      const sellerInfo = `\n\n--- 🔐 ÁREA DO VENDEDOR ---\n\nConfirme este pedido aqui:\n\n${confirmationLink}\n\n`;
       
       const fullMessage = messageHeader + itemsList + messageFooter + sellerInfo;
-      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-        fullMessage
-      )}`;
       
-      window.open(whatsappUrl, "_blank");
+      // Detectar se é mobile ou desktop para otimizar o link do WhatsApp
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const phoneNumber = WHATSAPP_NUMBER.replace(/\D/g, "");
       
-      // 3. Limpar carrinho e fechar após sucesso
-      setTimeout(() => {
-        clearCart();
-        setOpen(false);
-        setIsSubmitting(false);
-      }, 500);
+      let whatsappUrl = "";
+      if (isMobile) {
+        whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(fullMessage)}`;
+      } else {
+        // Formato correto para o WhatsApp Web (Desktop)
+        // Usar api.whatsapp.com como fallback seguro que detecta o ambiente
+        whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(fullMessage)}`;
+      }
+      
+      // 3. Limpar carrinho e fechar IMEDIATAMENTE antes de sair da página
+      clearCart();
+      setOpen(false);
+      setIsSubmitting(false);
+
+      // No desktop, redirecionar na mesma aba ajuda a focar no WhatsApp Web
+      if (!isMobile) {
+        window.location.href = whatsappUrl;
+      } else {
+        window.open(whatsappUrl, "_blank");
+      }
 
     } catch (error) {
       console.error("Erro no checkout:", error);
       toast.error("Ocorreu um erro ao processar seu pedido.");
       setIsSubmitting(false);
     }
+  };
+
+  // Helper for masking phone input (simple)
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    setCustomerPhone(value);
   };
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -158,7 +207,7 @@ export function CartDrawer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setOpen(false)}
-            className="fixed inset-0 z-50 bg-[#020617]/80 backdrop-blur-md"
+            className="fixed inset-0 z-[60] bg-[#020617]/80 backdrop-blur-md"
             aria-hidden="true"
           />
 
@@ -169,7 +218,7 @@ export function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 z-50 h-full w-full max-w-md border-l border-white/10 bg-[#020617] p-0 shadow-2xl"
+            className="fixed right-0 top-0 z-[70] h-full w-full max-w-md border-l border-white/10 bg-[#020617] p-0 shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="cart-title"
@@ -359,19 +408,40 @@ export function CartDrawer() {
                 {items.length > 0 && (
                   <div className="border-t border-white/5 bg-black/40 p-6 backdrop-blur-2xl">
                     <div className="space-y-3 mb-6">
-                      <div className="mb-4">
-                        <label htmlFor="customer-name" className="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1.5 ml-1">
-                          Seu Nome *
-                        </label>
-                        <input
-                          id="customer-name"
-                          type="text"
-                          placeholder="Como podemos te chamar?"
-                          value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-hidden focus:border-indigo-500/50 focus:bg-white/10 transition-all"
-                          required
-                        />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label htmlFor="customer-name" className="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1.5 ml-1">
+                            Seu Nome *
+                          </label>
+                          <input
+                            id="customer-name"
+                            type="text"
+                            placeholder="Como te chamamos?"
+                            value={customerName}
+                            onChange={(e) => setCustomerName(e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-hidden focus:border-indigo-500/50 focus:bg-white/10 transition-all font-bold"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="customer-phone" className="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1.5 ml-1">
+                            WhatsApp *
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2">
+                              <Phone className="h-3.5 w-3.5 text-indigo-400" />
+                            </span>
+                            <input
+                              id="customer-phone"
+                              type="tel"
+                              placeholder="(00) 00000-0000"
+                              value={customerPhone}
+                              onChange={handlePhoneChange}
+                              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-hidden focus:border-indigo-500/50 focus:bg-white/10 transition-all font-bold"
+                              required
+                            />
+                          </div>
+                        </div>
                       </div>
 
                       <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase tracking-widest">
@@ -404,7 +474,7 @@ export function CartDrawer() {
                       size="lg"
                       className="w-full gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={handleCheckout}
-                      disabled={!customerName.trim() || isSubmitting}
+                      disabled={isSubmitting}
                       aria-label="Finalizar pedido pelo WhatsApp"
                     >
                       {isSubmitting ? (

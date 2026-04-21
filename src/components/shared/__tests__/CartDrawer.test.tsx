@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CartDrawer } from '../CartDrawer';
-import { AppliedCoupon, CartStore, useCartStore } from '@/lib/store/cart-store';
+import { CartStore, useCartStore } from '@/lib/store/cart-store';
 
 // Mock the store
 jest.mock('@/lib/store/cart-store', () => ({
@@ -99,7 +99,7 @@ describe('CartDrawer Component', () => {
         totalItems: () => 0,
         totalPrice: () => 0,
         appliedCoupon: null,
-        applyCoupon: function (coupon: AppliedCoupon): void {
+        applyCoupon: function (): void {
           throw new Error('Function not implemented.');
         },
         removeCoupon: function (): void {
@@ -158,7 +158,7 @@ describe('CartDrawer Component', () => {
         totalItems: mockTotalItems,
         totalPrice: mockTotalPrice,
         appliedCoupon: null,
-        applyCoupon: function (_coupon: AppliedCoupon): void {
+        applyCoupon: function (): void {
           throw new Error('Function not implemented.');
         },
         removeCoupon: function (): void {

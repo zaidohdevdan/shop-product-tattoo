@@ -49,6 +49,7 @@ model Post {
 model Order {
   id             String      @id @default(cuid())
   customerName   String
+  customerPhone  String?
   totalPrice     Decimal     @db.Decimal(10, 2)
   status         OrderStatus @default(PENDING)
   sellerToken    String      @unique @default(uuid())
@@ -58,6 +59,9 @@ model Order {
   updatedAt      DateTime    @updatedAt
   coupon         Coupon?     @relation(fields: [couponId], references: [id])
   items          OrderItem[]
+
+  @@index([status, createdAt])
+  @@index([createdAt])
 }
 
 model OrderItem {
@@ -68,6 +72,9 @@ model OrderItem {
   price     Decimal @db.Decimal(10, 2)
   order     Order   @relation(fields: [orderId], references: [id])
   product   Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
 }
 
 model Coupon {

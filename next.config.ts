@@ -7,12 +7,16 @@ process.env.SERWIST_SUPPRESS_TURBOPACK_WARNING = "1";
 const withSerwist = withSerwistInit({
   swSrc: "src/app/sw.ts",
   swDest: "public/sw.js",
-  disable: process.env.NODE_ENV === "development",
+  disable: process.env.NODE_ENV === "development" || process.env.DISABLE_PWA === "true",
 });
 
 const nextConfig: NextConfig = {
   // Silences Next.js 16/Turbopack error when using Webpack-based plugins like Serwist
-  turbopack: {}, 
+  turbopack: {},
+  // ✅ [PERF] Enables 'use cache' directive for granular data caching
+  cacheComponents: true,
+  // ✅ [PERF] React Compiler auto-memoizes components (reduces unnecessary re-renders)
+  reactCompiler: true,
   images: {
     remotePatterns: [
       {
@@ -26,6 +30,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
       },
     ],
   },

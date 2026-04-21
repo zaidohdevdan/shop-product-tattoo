@@ -11,6 +11,7 @@ import Link from "next/link";
 interface OrderConfirmationFormProps {
   token: string;
   customerName: string;
+  customerPhone: string | null;
   totalPrice: number;
   items: {
     name: string;
@@ -20,7 +21,7 @@ interface OrderConfirmationFormProps {
   status: string;
 }
 
-export function OrderConfirmationForm({ token, customerName, totalPrice, items, status }: OrderConfirmationFormProps) {
+export function OrderConfirmationForm({ token, customerName, customerPhone, totalPrice, items, status }: OrderConfirmationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
 
@@ -81,6 +82,9 @@ export function OrderConfirmationForm({ token, customerName, totalPrice, items, 
           <div>
             <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Cliente</p>
             <h2 className="text-xl font-bold text-white uppercase tracking-tight">{customerName}</h2>
+            {customerPhone && (
+              <p className="text-xs font-medium text-zinc-500 mt-0.5">{customerPhone}</p>
+            )}
           </div>
         </div>
 

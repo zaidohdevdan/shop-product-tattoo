@@ -1,39 +1,36 @@
-import React from "react";
-import { productService } from "@/services/product-service";
-import { Package } from "lucide-react";
+import React, { Suspense } from "react";
 import { DashboardRefresher } from "@/components/admin/DashboardRefresher";
-import { salesService, TimeRange } from "@/services/sales-service";
 import { DateRangePicker } from "@/components/admin/DateRangePicker";
-import { DashboardStats } from "@/components/admin/DashboardStats";
-import { RecentSales } from "@/components/admin/RecentSales";
-import { CriticalStockCard } from "@/components/admin/CriticalStockCard";
-import { InventoryValuation } from "@/components/admin/InventoryValuation";
+import { TimeRange } from "@/services/sales-service";
+import {
+  DashboardStatsSection,
+  SalesTrendSection,
+  InventoryValuationSection,
+  RecentSalesSection,
+  InventoryOverviewSection,
+  CategorySalesSection,
+} from "@/components/admin/DashboardSections";
 
 interface PageProps {
   searchParams: Promise<{ range?: string }>;
 }
 
+// ✅ [PERF] Skeleton reutilizável para seções em carregamento
+function CardSkeleton({ className = "" }: { className?: string }) {
+  return (
+    <div className={`premium-card animate-pulse bg-slate-100/50 ${className}`} />
+  );
+}
+
 export default async function AdminDashboard({ searchParams }: PageProps) {
   const { range = "week" } = await searchParams;
-  
-  // Fetch Sales Stats
-  const metrics = await salesService.getDashboardStats(range as TimeRange);
-  const recentOrders = await salesService.getRecentOrders(5);
-
-  // Fetch Inventory Stats
-  const products = await productService.getProducts({ includeInactive: true });
-  const totalProducts = products.length;
-  const outOfStockProducts = products.filter(p => p.stock === 0);
-  
-  // Fetch Inventory Valuation
-  const valuationData = await productService.getInventoryValuation();
-  
+  const typedRange = range as TimeRange;
 
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-10 selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="p-6 md:p-10 max-w-[1600px] mx-auto space-y-10 selection:bg-indigo-100 selection:text-indigo-900">
       <DashboardRefresher />
-      
-      {/* Header & Filter */}
+
+      {/* Header & Filter — Renderizado imediatamente, sem esperar dados */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
         <div>
           <h1 className="text-4xl font-black text-zinc-900 uppercase tracking-tighter">Cockpit de Vendas</h1>
@@ -41,40 +38,46 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
         </div>
         <DateRangePicker />
       </div>
-      
-      {/* Sales Metrics */}
-      <DashboardStats metrics={metrics} />
 
-      {/* Inventory Financial Valuation */}
-      <InventoryValuation data={valuationData} />
-
+      {/* ✅ [PERF] Top Section — Chart e Valoração em Suspense paralelos */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Inventory Column */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="premium-card p-8 flex flex-col gap-6 group">
-            <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100 transition-all duration-500 group-hover:scale-110">
-              <Package className="h-5 w-5 text-indigo-600" />
-            </div>
-            <div>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Produtos Gerenciados</h3>
-              <p className="text-3xl font-black text-zinc-900 mt-2 tracking-tighter">{totalProducts}</p>
-            </div>
-          </div>
+        <div className="lg:col-span-2">
+          <Suspense fallback={<CardSkeleton className="h-[500px]" />}>
+            <SalesTrendSection range={typedRange} />
+          </Suspense>
+        </div>
+        <div className="lg:col-span-1">
+          <Suspense fallback={<CardSkeleton className="h-[500px]" />}>
+            <InventoryValuationSection />
+          </Suspense>
+        </div>
+      </div>
 
-          <CriticalStockCard 
-            outOfStockProducts={outOfStockProducts.map(p => ({ 
-              id: p.id, 
-              name: p.name, 
-              stock: p.stock,
-              sku: p.sku,
-              images: p.images
-            }))} 
-          />
+      {/* ✅ [PERF] Métricas de Vendas em Suspense */}
+      <Suspense fallback={
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {[...Array(4)].map((_, i) => <CardSkeleton key={i} className="h-36" />)}
+        </div>
+      }>
+        <DashboardStatsSection range={typedRange} />
+      </Suspense>
+
+      {/* ✅ [PERF] Inventário, Categorias e Vendas Recentes */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="lg:col-span-1 space-y-6">
+          <Suspense fallback={<div className="space-y-6"><CardSkeleton className="h-40" /><CardSkeleton className="h-64" /></div>}>
+            <InventoryOverviewSection />
+          </Suspense>
+          
+          <Suspense fallback={<CardSkeleton className="h-80" />}>
+            <CategorySalesSection range={typedRange} />
+          </Suspense>
         </div>
 
-        {/* Recent Sales Column */}
-        <div className="lg:col-span-2">
-          <RecentSales orders={recentOrders} />
+        <div className="lg:col-span-3">
+          <Suspense fallback={<CardSkeleton className="h-[730px]" />}>
+            <RecentSalesSection />
+          </Suspense>
         </div>
       </div>
     </div>

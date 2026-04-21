@@ -21,6 +21,7 @@ export interface AppliedCoupon {
 export interface CartStore {
   items: CartItem[];
   customerName: string;
+  customerPhone: string;
   appliedCoupon: AppliedCoupon | null;
   isOpen: boolean;
   _hasHydrated: boolean;
@@ -30,6 +31,7 @@ export interface CartStore {
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   setCustomerName: (name: string) => void;
+  setCustomerPhone: (phone: string) => void;
   toggleCart: () => void;
   setOpen: (open: boolean) => void;
   applyCoupon: (coupon: AppliedCoupon) => void;
@@ -43,6 +45,7 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       customerName: "",
+      customerPhone: "",
       appliedCoupon: null,
       isOpen: false,
       _hasHydrated: false,
@@ -92,6 +95,8 @@ export const useCartStore = create<CartStore>()(
       clearCart: () => set({ items: [], appliedCoupon: null }),
       
       setCustomerName: (customerName) => set({ customerName }),
+
+      setCustomerPhone: (customerPhone) => set({ customerPhone }),
 
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
       

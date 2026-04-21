@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { NewsletterForm } from "./NewsletterForm";
 
 // SVG icons para redes sociais (não disponíveis no lucide-react v1)
 const InstagramIcon = () => (
@@ -45,7 +46,14 @@ export function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-6">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.png" alt="ShopTattoo Logo" width={40} height={40} className="rounded-xl shadow-[0_0_15px_-3px_rgba(79,70,229,0.3)] hover:scale-105 transition-transform" />
+              <Image
+                title="ShopTattoo"
+                alt='ShopTattoo Logo'
+                src="/logo.png"
+                width={40}
+                height={40}
+                className="rounded-xl shadow-[0_0_15px_-3px_rgba(79,70,229,0.3)] hover:scale-105 transition-transform"
+              />
               <span className="text-xl font-black uppercase tracking-tighter text-white">
                 Shop<span className="text-indigo-500">Tattoo</span>
               </span>
@@ -70,10 +78,10 @@ export function Footer() {
           <div>
             <h4 className="text-white font-bold mb-6">Navegação</h4>
             <ul className="flex flex-col gap-4 text-sm text-zinc-400">
-              <li><Link href="/#inicio" className="hover:text-white transition-colors">Início</Link></li>
-              <li><Link href="/#products" className="hover:text-white transition-colors">Produtos</Link></li>
-              <li><Link href="/#studio" className="hover:text-white transition-colors">O Estúdio</Link></li>
-              <li><Link href="/#testimonials" className="hover:text-white transition-colors">Depoimentos</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Início</Link></li>
+              <li><Link href="/products" className="hover:text-white transition-colors">Produtos</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors">O Estúdio / Quem Somos</Link></li>
+              <li><Link href="/faq" className="hover:text-white transition-colors">Dúvidas Frequentes</Link></li>
             </ul>
           </div>
 
@@ -81,10 +89,10 @@ export function Footer() {
           <div>
             <h4 className="text-white font-bold mb-6">Suporte</h4>
             <ul className="flex flex-col gap-4 text-sm text-zinc-400">
-              <li><Link href="#" className="hover:text-white transition-colors">Minha Conta</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Rastrear Pedido</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Políticas de Privacidade</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Termos de Uso</Link></li>
+              <li><Link href="/terms#trocas" className="hover:text-white transition-colors">Trocas e Devoluções</Link></li>
+              <li><Link href="/faq" className="hover:text-white transition-colors">Como Comprar</Link></li>
+              <li><Link href="/terms#privacidade" className="hover:text-white transition-colors">Políticas de Privacidade</Link></li>
+              <li><Link href="/terms#termos" className="hover:text-white transition-colors">Termos de Uso</Link></li>
             </ul>
           </div>
 
@@ -108,13 +116,51 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-white/5 flex flex-col items-center justify-between gap-4 md:flex-row">
-          <p className="text-xs text-zinc-500 text-center">
-            © 2026 ShopTattoo. Todos os direitos reservados.
-          </p>
-          <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold flex items-center gap-1">
-            Desenvolvido com <span className="text-indigo-500">♥</span> por Daniel de Almeida
-          </p>
+        {/* Newsletter Section */}
+        <div className="mt-20 rounded-3xl border border-white/5 bg-zinc-950/50 p-8 md:p-12">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-center">
+            <div>
+              <h3 className="text-2xl font-black text-white uppercase tracking-tight">Receba Ofertas Exclusivas</h3>
+              <p className="mt-2 text-sm text-zinc-400">Inscreva-se para receber novidades, lançamentos e cupons de desconto.</p>
+            </div>
+            <NewsletterForm />
+          </div>
+        </div>
+
+        <div className="mt-16 pt-8 border-t border-white/5 flex flex-col items-center justify-between gap-8 md:flex-row">
+          <div className="flex flex-col items-center md:items-start gap-4">
+            <p className="text-xs text-zinc-500 text-center md:text-left">
+              © 2026 ShopTattoo. Todos os direitos reservados.
+            </p>
+            {/* Payment Methods */}
+            <div className="flex items-center gap-3 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+               <div className="h-6 w-9 rounded-sm bg-white/10 flex items-center justify-center p-1 border border-white/10">
+                 <Image src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" width={36} height={24} className="h-full w-auto" />
+               </div>
+               <div className="h-6 w-9 rounded-sm bg-white/10 flex items-center justify-center p-1 border border-white/10">
+                <Image src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" width={36} height={24} className="h-full w-auto" />
+               </div>
+               <div className="h-6 w-9 rounded-sm bg-white/10 flex items-center justify-center p-1 border border-white/10">
+                <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Pix_logo.svg" alt="Pix" width={36} height={24} className="h-full w-auto" />
+               </div>
+               <div className="h-6 w-9 rounded-sm bg-white/10 flex items-center justify-center p-1 border border-white/10">
+                <Image src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Elo_card_association_logo_-_black_text.svg" alt="Elo" width={36} height={24} className="h-full w-auto" />
+               </div>
+               <div className="h-6 w-9 rounded-sm bg-white/10 flex items-center justify-center p-1 border border-white/10">
+                <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" width={36} height={24} className="h-full w-auto" />
+               </div>
+            </div>
+          </div>
+          
+          <div className="flex flex-col items-center md:items-end gap-2">
+            <p className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold flex items-center gap-1">
+              Desenvolvido com <span className="text-indigo-500">♥</span> por Daniel de Almeida
+            </p>
+            <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-zinc-600">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              Ambiente Seguro & Criptografado
+            </div>
+          </div>
         </div>
       </div>
     </footer>
