@@ -66,13 +66,21 @@ export default async function ProductsPage({ searchParams }: PageProps) {
               </div>
             ) : (
               <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {products.map((product) => (
+                {products.map((product, index) => (
                   <ProductCard
                     key={product.id}
                     product={{
-                      ...product,
+                      id: product.id,
+                      name: product.name,
+                      slug: product.slug,
+                      sku: product.sku,
+                      stock: product.stock,
+                      images: product.images,
                       price: Number(product.price),
+                      costPrice: Number(product.costPrice),
+                      category: product.category,
                     }}
+                    priority={index < 2}
                   />
                 ))}
               </div>

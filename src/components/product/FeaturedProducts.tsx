@@ -33,13 +33,21 @@ export async function FeaturedProducts() {
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {products.map((product) => (
+          {products.map((product, index) => (
             <ProductCard
               key={product.id}
               product={{
-                ...product,
+                id: product.id,
+                name: product.name,
+                slug: product.slug,
+                sku: product.sku,
+                stock: product.stock,
+                images: product.images,
                 price: Number(product.price),
+                costPrice: Number(product.costPrice),
+                category: product.category,
               }}
+              priority={index < 4} // On home featured, first row (4 items) is usually above fold
             />
           ))}
         </div>

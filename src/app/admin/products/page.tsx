@@ -4,6 +4,7 @@ import { Plus, Edit2 } from 'lucide-react';
 import { ToggleStatusButton } from '@/components/admin/ToggleStatusButton';
 import { Pagination } from '@/components/admin/Pagination';
 import { ProductFilters as ProductFiltersUI } from '@/components/admin/ProductFilters';
+import { DeleteProductButton } from '@/components/admin/DeleteProductButton';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -50,6 +51,8 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
   // Sanitiza imagens em tempo de exibição para proteger a UI
   const products = productsResult.map(p => ({
     ...p,
+    price: Number(p.price),
+    costPrice: Number(p.costPrice),
     images: p.images.filter(isValidCloudinaryUrl)
   }));
 
@@ -154,6 +157,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
                           <Edit2 className="h-4 w-4" />
                         </Link>
                         <ToggleStatusButton id={product.id} active={product.active} />
+                        <DeleteProductButton id={product.id} name={product.name} />
                       </div>
                     </td>
                   </tr>

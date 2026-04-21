@@ -83,3 +83,33 @@ export async function saveProductAction(formData: FormData) {
     return { error: "Ocorreu um erro interno ao salvar o produto." };
   }
 }
+
+export async function deleteProductAction(id: string) {
+  try {
+    // Verifica se o produto tem itens de pedido associados
+    const orderItemsCount = await prisma.orderItem.count({
+      where: { productId: id }
+    });
+
+    if (orderItemsCount > 0) {
+      return { 
+        error: "Este produto não pode ser excluído permanentemente porque possui histórico de vendas. Recomendamos que você apenas o oculte do catálogo." 
+      };
+    }
+
+    await prisma.product.delete({
+      where: { id }
+    });
+
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/admin", "layout");
+    revalidatePath("/admin/products");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Erro ao deletar produto:", error);
+    return { error: "Não foi possível excluir o produto. Tente novamente mais tarde." };
+  }
+}
+

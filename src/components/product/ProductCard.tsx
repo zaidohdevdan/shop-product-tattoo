@@ -12,6 +12,7 @@ interface ProductCardProps {
     name: string;
     slug: string;
     price: number | string;
+    costPrice?: number | string;
     sku: string;
     stock: number;
     images: string[];
@@ -20,12 +21,13 @@ interface ProductCardProps {
     } | null;
   };
   className?: string;
+  priority?: boolean;
 }
 
 import { useCartStore } from "@/lib/store/cart-store";
 import { Button } from "@/components/ui/button";
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({ product, className, priority }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem);
   const isOutOfStock = product.stock <= 0;
 
@@ -59,16 +61,17 @@ export function ProductCard({ product, className }: ProductCardProps) {
     >
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-zinc-950">
-        <Image
-          src={product.images[0] || "/placeholder-fallback.png"}
-          alt={product.name}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-          className={cn(
-            "object-contain p-6 transition-transform duration-500",
-            !isOutOfStock && "group-hover:scale-110"
-          )}
-        />
+          <Image
+            src={product.images[0] || "/placeholder-fallback.png"}
+            alt={product.name}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            className={cn(
+              "object-contain p-6 transition-transform duration-500",
+              !isOutOfStock && "group-hover:scale-110"
+            )}
+            priority={priority}
+          />
         
         {isOutOfStock && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-[2px]">

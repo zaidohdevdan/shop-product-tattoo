@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { Ticket } from "lucide-react";
 import { CouponsClientPage } from "./CouponsClientPage";
 
 export default async function AdminCouponsPage() {

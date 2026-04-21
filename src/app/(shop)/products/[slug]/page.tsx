@@ -200,7 +200,17 @@ export default async function ProductPage({ params }: PageProps) {
                 {relatedProducts.map((p) => (
                   <ProductCard
                     key={p.id}
-                    product={{ ...p, price: Number(p.price) }}
+                    product={{ 
+                      id: p.id,
+                      name: p.name,
+                      slug: p.slug,
+                      sku: p.sku,
+                      stock: p.stock,
+                      images: p.images,
+                      price: Number(p.price),
+                      costPrice: Number(p.costPrice),
+                      category: p.category,
+                    }}
                   />
                 ))}
               </div>
