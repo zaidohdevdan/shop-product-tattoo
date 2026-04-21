@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+
 import { useCartStore } from "@/lib/store/cart-store";
 
 const WhatsAppIcon = () => (
@@ -11,11 +13,15 @@ const WhatsAppIcon = () => (
 );
 
 export function FloatingWhatsApp() {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
   const [isVisible, setIsVisible] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const isCartOpen = useCartStore((state) => state.isOpen);
 
   useEffect(() => {
+    if (isAdmin) return;
+
     // Show after 2s for better engagement
     const timer = setTimeout(() => {
       setIsVisible(true);
@@ -31,7 +37,10 @@ export function FloatingWhatsApp() {
   const message = encodeURIComponent("Olá! Estou no site e gostaria de tirar algumas dúvidas.");
   const url = `https://wa.me/${waNumber}?text=${message}`;
 
+  if (isAdmin) return null;
+
   return (
+
     <div 
       className={cn(
         "fixed bottom-8 right-8 z-50 flex items-center transition-all duration-700",

@@ -12,12 +12,20 @@ import { Package } from "lucide-react";
 // Sub-components async: cada um faz seu próprio fetch em paralelo com o Suspense
 // ---------------------------------------------------------------------------
 
-export async function DashboardStatsSection({ range }: { range: TimeRange }) {
+interface SectionProps {
+  rangePromise: Promise<{ range?: string }>;
+}
+
+export async function DashboardStatsSection({ rangePromise }: SectionProps) {
+  const resolvedParams = await rangePromise;
+  const range = (resolvedParams?.range as TimeRange) || "week";
   const metrics = await salesService.getDashboardStats(range);
   return <DashboardStats metrics={metrics} />;
 }
 
-export async function SalesTrendSection({ range }: { range: TimeRange }) {
+export async function SalesTrendSection({ rangePromise }: SectionProps) {
+  const resolvedParams = await rangePromise;
+  const range = (resolvedParams?.range as TimeRange) || "week";
   const trendData = await salesService.getSalesTrendData(range);
   return <SalesTrendChart data={trendData} />;
 }
@@ -54,7 +62,9 @@ export async function InventoryOverviewSection() {
   );
 }
 
-export async function CategorySalesSection({ range }: { range: TimeRange }) {
+export async function CategorySalesSection({ rangePromise }: SectionProps) {
+  const resolvedParams = await rangePromise;
+  const range = (resolvedParams?.range as TimeRange) || "week";
   const categoryData = await salesService.getSalesByCategory(range);
   return <CategorySalesChart data={categoryData} />;
 }

@@ -1,7 +1,6 @@
 import React, { Suspense } from "react";
 import { DashboardRefresher } from "@/components/admin/DashboardRefresher";
 import { DateRangePicker } from "@/components/admin/DateRangePicker";
-import { TimeRange } from "@/services/sales-service";
 import {
   DashboardStatsSection,
   SalesTrendSection,
@@ -22,28 +21,35 @@ function CardSkeleton({ className = "" }: { className?: string }) {
   );
 }
 
-export default async function AdminDashboard({ searchParams }: PageProps) {
-  const { range = "week" } = await searchParams;
-  const typedRange = range as TimeRange;
-
+/**
+ * ✅ [PERF] O Dashboard Administrativo agora segue o padrão de "Instant Shell" do Next.js 16.
+ * O componente não aguarda (await) os searchParams diretamente, permitindo que o cabeçalho e 
+ * a estrutura da página renderizem IMEDIATAMENTE (Streaming).
+ */
+export default function AdminDashboard({ searchParams }: PageProps) {
   return (
     <div className="p-6 md:p-10 max-w-[1600px] mx-auto space-y-10 selection:bg-indigo-100 selection:text-indigo-900">
       <DashboardRefresher />
 
-      {/* Header & Filter — Renderizado imediatamente, sem esperar dados */}
+      {/* Header & Filter — Renderizado imediatamente */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
         <div>
           <h1 className="text-4xl font-black text-zinc-900 uppercase tracking-tighter">Cockpit de Vendas</h1>
           <p className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] mt-2">Visão Geral do Seu Negócio</p>
         </div>
-        <DateRangePicker />
+        
+        {/* ✅ [PERF] DateRangePicker usa useSearchParams(), por isso precisa estar em Suspense 
+            para não desativar a renderização estática da rota inteira. */}
+        <Suspense fallback={<div className="h-14 w-64 bg-slate-100 animate-pulse rounded-2xl" />}>
+          <DateRangePicker />
+        </Suspense>
       </div>
 
       {/* ✅ [PERF] Top Section — Chart e Valoração em Suspense paralelos */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <Suspense fallback={<CardSkeleton className="h-[500px]" />}>
-            <SalesTrendSection range={typedRange} />
+            <SalesTrendSection rangePromise={searchParams} />
           </Suspense>
         </div>
         <div className="lg:col-span-1">
@@ -59,7 +65,7 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
           {[...Array(4)].map((_, i) => <CardSkeleton key={i} className="h-36" />)}
         </div>
       }>
-        <DashboardStatsSection range={typedRange} />
+        <DashboardStatsSection rangePromise={searchParams} />
       </Suspense>
 
       {/* ✅ [PERF] Inventário, Categorias e Vendas Recentes */}
@@ -70,7 +76,7 @@ export default async function AdminDashboard({ searchParams }: PageProps) {
           </Suspense>
           
           <Suspense fallback={<CardSkeleton className="h-80" />}>
-            <CategorySalesSection range={typedRange} />
+            <CategorySalesSection rangePromise={searchParams} />
           </Suspense>
         </div>
 

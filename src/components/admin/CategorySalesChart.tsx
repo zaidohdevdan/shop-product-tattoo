@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
 interface CategorySalesChartProps {
@@ -19,6 +19,16 @@ const COLORS = [
 ];
 
 export function CategorySalesChart({ data }: CategorySalesChartProps) {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = requestAnimationFrame(() => {
+      setHasMounted(true);
+    });
+    return () => cancelAnimationFrame(timer);
+  }, []);
+
+
   if (!data || data.length === 0) {
     return (
       <div className="premium-card p-8 flex flex-col items-center justify-center h-[320px] text-center border-dashed border-2">
@@ -43,8 +53,15 @@ export function CategorySalesChart({ data }: CategorySalesChartProps) {
         </div>
       </div>
 
-      <div className="flex-1 w-full relative">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="flex-1 w-full relative min-h-[300px]">
+        {!hasMounted ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+
+
           <PieChart>
             <Pie
               data={data}
@@ -96,6 +113,7 @@ export function CategorySalesChart({ data }: CategorySalesChartProps) {
             />
           </PieChart>
         </ResponsiveContainer>
+        )}
 
         {/* Center Text for Donut */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[calc(50%+10px)] pointer-events-none text-center">

@@ -1,10 +1,18 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { Truck, Ticket } from "lucide-react";
 
+
 export function PromoBanner() {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
+
+  if (isAdmin) return null;
+
   return (
+
     <div className="relative z-[60] w-full bg-linear-to-r from-indigo-600 via-violet-700 to-indigo-600 px-4 py-2 overflow-hidden shadow-[0_4px_20px_-5px_rgba(79,70,229,0.5)]">
       {/* Animated Shine Effect */}
       <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg] animate-shine pointer-events-none" />

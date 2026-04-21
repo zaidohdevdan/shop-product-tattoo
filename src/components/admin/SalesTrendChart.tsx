@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -24,6 +24,16 @@ interface SalesTrendChartProps {
 }
 
 export function SalesTrendChart({ data }: SalesTrendChartProps) {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = requestAnimationFrame(() => {
+      setHasMounted(true);
+    });
+    return () => cancelAnimationFrame(timer);
+  }, []);
+
+
   return (
     <div className="premium-card p-10 space-y-8 group transition-all duration-700 hover:shadow-2xl hover:shadow-indigo-500/5 h-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -46,7 +56,14 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
       </div>
 
       <div className="h-[350px] min-h-[350px] w-full mt-4">
-        <ResponsiveContainer width="100%" height="100%" debounce={100}>
+        {!hasMounted ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%" debounce={100} minWidth={0} minHeight={0}>
+
+
           <AreaChart
             data={data}
             margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
@@ -122,6 +139,7 @@ export function SalesTrendChart({ data }: SalesTrendChartProps) {
             />
           </AreaChart>
         </ResponsiveContainer>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-6 pt-6 border-t border-slate-100">
