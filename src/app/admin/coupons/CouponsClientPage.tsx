@@ -68,7 +68,7 @@ export function CouponsClientPage({ initialCoupons }: CouponsClientPageProps) {
         {initialCoupons.map((coupon) => (
           <div 
             key={coupon.id} 
-            className="premium-card p-10 flex flex-col group animate-in fade-in slide-in-from-bottom-4 duration-700 shadow-sm relative"
+            className="premium-card p-10 flex flex-col group animate-in fade-in slide-in-from-bottom-4 duration-700 shadow-sm relative border-2 border-transparent hover:border-indigo-600/20 hover:shadow-xl hover:shadow-indigo-500/5 transition-all"
           >
             {/* Status Badge */}
             <div className="absolute top-8 right-8">

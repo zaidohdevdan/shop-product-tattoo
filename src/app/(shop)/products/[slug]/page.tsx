@@ -156,8 +156,8 @@ export default async function ProductPage({ params }: PageProps) {
                 </div>
 
                 {/* Buy Actions */}
-                <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-black/80 px-6 py-4 backdrop-blur-xl md:static md:bottom-auto md:left-auto md:right-auto md:z-auto md:border-none md:bg-transparent md:p-0 md:backdrop-blur-none">
-                  <div className="mx-auto flex max-w-7xl gap-3">
+                <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-black/80 px-6 py-6 pb-8 backdrop-blur-xl md:static md:z-auto md:border-none md:bg-transparent md:p-0 md:backdrop-blur-none">
+                  <div className="mx-auto flex flex-col md:flex-row max-w-7xl gap-4">
                     <AddToCartButton
                       product={{
                         id: product.id,
@@ -168,7 +168,7 @@ export default async function ProductPage({ params }: PageProps) {
                         sku: product.sku,
                         slug: product.slug,
                       }}
-                      className="flex-[1.5]"
+                      className="w-full md:flex-[1.5]"
                     />
                     <ProductBuyAction
                       product={{
@@ -180,7 +180,7 @@ export default async function ProductPage({ params }: PageProps) {
                         sku: product.sku,
                         slug: product.slug,
                       }}
-                      className="flex-1"
+                      className="w-full md:flex-1"
                     />
                   </div>
                 </div>

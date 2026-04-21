@@ -81,7 +81,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {categories.map((cat) => (
-                    <tr key={cat.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <tr key={cat.id} className="hover:bg-slate-50 active:bg-slate-100 transition-all duration-300 border-l-4 border-transparent hover:border-indigo-600 active:border-indigo-700 group">
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-5">
                           <div className="h-10 w-10 rounded-lg bg-slate-50 flex items-center justify-center shrink-0 border border-slate-200 group-hover:border-indigo-200 transition-all">

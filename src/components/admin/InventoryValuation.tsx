@@ -104,14 +104,14 @@ export function InventoryValuation({ data }: InventoryValuationProps) {
             </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-200/60 flex items-center justify-between">
-            <div>
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Margem Líquida Estimada</p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-black text-slate-900 tracking-tighter">
+          <div className="pt-6 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 truncate">Margem Líquida Estimada</p>
+              <div className="flex flex-wrap items-baseline gap-2">
+                <span className="text-2xl font-black text-slate-900 tracking-tighter whitespace-nowrap">
                   R$ {totalMargin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                 </span>
-                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">
+                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100 whitespace-nowrap">
                   +{marginPercentage.toFixed(1)}%
                 </span>
               </div>
