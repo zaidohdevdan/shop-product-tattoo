@@ -27,7 +27,7 @@ export function Sidebar() {
     <>
       {/* MOBILE HEADER */}
       <div className="flex md:hidden h-20 shrink-0 items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-md px-6 sticky top-0 z-50">
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/admin" className="flex items-center gap-3">
           <Image src="/logo.png" alt="Logo" width={28} height={28} className="rounded-lg" />
           <span className="text-base font-black uppercase tracking-tighter text-zinc-900">
             Shop<span className="text-indigo-600">Admin</span>
@@ -62,7 +62,7 @@ export function Sidebar() {
               className="fixed inset-y-0 left-0 w-72 bg-[#0f172a] z-[70] flex flex-col p-6 shadow-2xl md:hidden"
             >
               <div className="flex items-center justify-between mb-12">
-                <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
+                <Link href="/admin" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
                   <Image src="/logo.png" alt="Logo" width={32} height={32} className="rounded-lg" />
                   <span className="text-lg font-black uppercase tracking-tighter text-white">
                     Shop<span className="text-indigo-500">Admin</span>
@@ -116,7 +116,7 @@ export function Sidebar() {
 
       {/* DESKTOP SIDEBAR */}
       <div className="hidden md:flex h-screen w-72 flex-col bg-[#0f172a] p-6 sticky top-0 shrink-0">
-        <Link href="/" className="mb-14 flex items-center gap-3 px-2 transition-transform hover:scale-[1.01]">
+        <Link href="/admin" className="mb-14 flex items-center gap-3 px-2 transition-transform hover:scale-[1.01]">
           <Image src="/logo.png" alt="Logo" width={36} height={36} className="rounded-lg" />
           <span className="text-xl font-black uppercase tracking-tighter text-white">
             Shop<span className="text-indigo-400">Admin</span>
