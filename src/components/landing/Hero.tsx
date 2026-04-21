@@ -10,12 +10,12 @@ import { motion, useScroll, useTransform } from "framer-motion";
 export function Hero() {
   const { scrollY } = useScroll();
   const yParallax = useTransform(scrollY, [0, 1000], [0, 300]);
-  
+
   return (
     <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 md:pt-20">
       {/* Background with Parallax */}
-      <motion.div 
-        style={{ y: yParallax }} 
+      <motion.div
+        style={{ y: yParallax }}
         className="absolute inset-0 z-0 origin-top scale-110"
       >
         <Image
@@ -56,7 +56,7 @@ export function Hero() {
         >
           Tradição, Arte e <br />
           <span className="bg-linear-to-r from-indigo-500 via-violet-500 to-indigo-500 bg-clip-text text-transparent">
-            Equipamento de Elite
+            Produtos de Qualidade
           </span>
         </motion.h1>
 
