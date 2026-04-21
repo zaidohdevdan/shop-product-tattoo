@@ -7,6 +7,7 @@ import { CouponForm } from "@/components/admin/coupons/CouponForm";
 import { deleteCouponAction } from "@/actions/coupon-actions";
 import { toast } from "sonner";
 import { CouponType } from "@prisma/client";
+import { ConfirmActionDialog } from "@/components/shared/ConfirmActionDialog";
 
 interface Coupon {
   id: string;
@@ -26,19 +27,25 @@ interface CouponsClientPageProps {
 export function CouponsClientPage({ initialCoupons }: CouponsClientPageProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<Coupon | undefined>(undefined);
+  const [couponToDelete, setCouponToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este cupom?")) return;
+  const handleDelete = async () => {
+    if (!couponToDelete) return;
     
+    setIsDeleting(true);
     try {
-      const result = await deleteCouponAction(id);
+      const result = await deleteCouponAction(couponToDelete);
       if (result.error) {
         toast.error(result.error);
       } else {
         toast.success("Cupom excluído com sucesso!");
       }
     } catch (error) {
-      toast.error("Erro ao excluir cupom:"+ error);
+      toast.error("Erro ao excluir cupom: " + error);
+    } finally {
+      setIsDeleting(false);
+      setCouponToDelete(null);
     }
   };
 
@@ -132,7 +139,7 @@ export function CouponsClientPage({ initialCoupons }: CouponsClientPageProps) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleDelete(coupon.id)}
+                onClick={() => setCouponToDelete(coupon.id)}
                 className="h-12 w-12 rounded-xl border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 transition-all flex items-center justify-center p-0"
               >
                 <Trash2 className="h-4 w-4 text-slate-400" />
@@ -164,6 +171,16 @@ export function CouponsClientPage({ initialCoupons }: CouponsClientPageProps) {
           </div>
         </div>
       )}
+      {/* Delete Confirmation */}
+      <ConfirmActionDialog
+        isOpen={!!couponToDelete}
+        onClose={() => setCouponToDelete(null)}
+        onConfirm={handleDelete}
+        title="Excluir Cupom"
+        description="Esta ação é permanente e invalidará o código promocional para novos pedidos."
+        confirmText="Excluir Permanentemente"
+        isPending={isDeleting}
+      />
     </div>
   );
 }
