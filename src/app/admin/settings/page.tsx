@@ -7,7 +7,7 @@ export default function AdminSettingsPage() {
       <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-4 duration-700">
          <div className="flex items-center gap-3 mb-2">
             <div className="h-8 w-1.5 bg-indigo-600 rounded-full" />
-            <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">Configurações Globais</h1>
+            <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Configurações Globais</h1>
           </div>
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-4.5">Parametrização operacional e comportamento da loja</p>
       </div>
